@@ -1,0 +1,24 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    
+    
+    steps:
+      - name: build
+        run: npm run build --if-present
+        
+      - uses: actions/checkout@v2
+      - uses: CDNievas/heroku-action@v1.0 # This is the action
+        with:
+          heroku_email: "sys.ryan0902@gmail.com"
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "nike-clone-ryan"
