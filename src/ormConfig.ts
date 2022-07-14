@@ -23,10 +23,12 @@ export class OrmConfig {
       }
       case 'production': {
         ormConfig = {
+          type: process.env.DATABASE_TYPE,
           host: process.env.DATABASE_HOST,
-          user: process.env.DATABASE_USER,
+          username: process.env.DATABASE_USERNAME,
           password: process.env.DATABASE_PASSWORD,
           database: process.env.DATABASE_NAME,
+          entities: ['dist/**/*.entity{.ts,.js}'],
         } as TypeOrmModuleOptions;
         break;
       }
