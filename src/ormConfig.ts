@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
+import { Category } from './category/entities/category.entity';
 
 const envFilePath = `${__dirname}/config/env/.${process.env.NODE_ENV}.env`;
 dotenv.config({ path: envFilePath });
@@ -16,7 +17,9 @@ export class OrmConfig {
           username: process.env.DATABASE_USERNAME,
           password: process.env.DATABASE_PASSWORD,
           database: process.env.DATABASE_NAME,
-          enities: [__dirname + '/**/*.entity{.ts,.js}'],
+          // enities: [__dirname + '/**/*.entity{.ts,.js}'],
+          // entities: [Category],
+          autoLoadEntities: true,
           synchronize: true,
         } as TypeOrmModuleOptions;
         break;
@@ -28,7 +31,8 @@ export class OrmConfig {
           username: process.env.DATABASE_USERNAME,
           password: process.env.DATABASE_PASSWORD,
           database: process.env.DATABASE_NAME,
-          entities: [process.env.DATABASE_ENTITIES],
+          // entities: [process.env.DATABASE_ENTITIES],
+          autoLoadEntities: true,
         } as TypeOrmModuleOptions;
         break;
       }
