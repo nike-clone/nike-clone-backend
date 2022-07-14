@@ -16,29 +16,14 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  createCategory(@Body() createCategoryDto: CreateCategoryDto) {
     const { name } = createCategoryDto;
-    return this.categoryService.create(name);
+    return this.categoryService.createCategory(name);
   }
 
   @Get()
   findAll() {
-    // TODO: find all categories in Database and format them according to their level.
-
-    const categoryObject = {
-      'New Releases': [],
-      Men: [],
-      Women: [],
-      Kids: [],
-      Sale: [],
-    };
-
-    // for (const key in categoryObject) {
-    //   console.log(key);
-    // }
-
-    return categoryObject;
-    // return this.categoryService.findAll();
+    return this.categoryService.findAll();
   }
 
   @Get(':id')
@@ -51,7 +36,8 @@ export class CategoryController {
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoryService.update(+id, updateCategoryDto);
+    const { name: updatedName } = updateCategoryDto;
+    return this.categoryService.update(+id, updatedName);
   }
 
   @Delete(':id')

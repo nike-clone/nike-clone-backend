@@ -1,37 +1,88 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoryService {
-  // constructor(
-  //   @InjectRepository(Category)
-  //   private categoryRepository: Repository<Category>,
-  // ) {}
+  constructor(
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
+  ) {}
 
-  create(categoryName: string) {
+  async createCategory(categoryName: string) {
     //check category exists
+    const categoryExists = await this.checkCategoryExistsByName(categoryName);
 
-    //save category
-    return 'This action adds a new category';
+    if (categoryExists) {
+      throw new UnprocessableEntityException(
+        `Category "${categoryName}" already exists.`,
+      );
+    }
+
+    const newCategory = { name: categoryName };
+    const createdCategory = await this.categoryRepository.save(newCategory);
+    return {
+      message: 'The category was successfully created!',
+      data: { id: createdCategory.id, name: createdCategory.name },
+    };
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    return await this.categoryRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number) {
+    const category = await this.categoryRepository.findOne(id);
+    if (!category) {
+      throw new NotFoundException('Category id not registered.');
+    }
+
+    return { data: { category } };
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updatedName: string) {
+    const categoryExists = await this.checkCategoryExistsByName(updatedName);
+    if (categoryExists) {
+      throw new BadRequestException(
+        `Category "${updatedName}" already exists.`,
+      );
+    }
+
+    await this.categoryRepository.update(id, { name: updatedName });
+
+    return {
+      message: 'The category was successfully updated!',
+      data: { id: +id, name: updatedName },
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    const category = await this.categoryRepository.findOne(id);
+    if (!category) {
+      throw new NotFoundException('Category id not registered.');
+    }
+
+    await this.categoryRepository.remove(category);
+    return {
+      message: 'The category was successfully updated!',
+    };
+  }
+
+  private async checkCategoryExistsByName(name) {
+    const category = await this.categoryRepository.findOne({ name });
+
+    return category !== undefined;
+  }
+
+  private async checkCategoryExistsById(id) {
+    const category = await this.categoryRepository.findOne(+id);
+
+    return category !== undefined;
   }
 }
