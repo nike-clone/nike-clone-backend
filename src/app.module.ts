@@ -10,6 +10,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuroraDataApiConnectionOptions } from 'typeorm/driver/aurora-data-api/AuroraDataApiConnectionOptions';
 import OrmConfig from './ormConfig';
 
+console.log(OrmConfig);
 @Module({
   controllers: [AppController],
   providers: [AppService],
