@@ -17,7 +17,8 @@ export class CategoryController {
 
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+    const { name } = createCategoryDto;
+    return this.categoryService.create(name);
   }
 
   @Get()
