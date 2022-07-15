@@ -1,4 +1,8 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ulid } from 'ulid';
@@ -8,11 +12,14 @@ import { Gender } from './types/gender-type';
 import * as uuid from 'uuid';
 import { EmailService } from 'src/email/email.service';
 
+import { Connection } from 'typeorm';
+
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     private emailService: EmailService,
+    private connection: Connection,
   ) {}
 
   async createUser(
@@ -30,17 +37,29 @@ export class UsersService {
 
     const signupVerifyToken = uuid.v1();
 
-    const user = new User();
-    user.id = ulid();
-    user.name = name;
-    user.email = email;
-    user.password = password;
-    user.phone = phone;
-    user.birthOfDate = birthOfDate;
-    user.gender = gender;
-    user.signupVerifyToken = signupVerifyToken;
+    let isTransectionReflected = true;
+    let user;
+    try {
+      await this.connection.transaction(async (manager) => {
+        user = new User();
+        user.id = ulid();
+        user.name = name;
+        user.email = email;
+        user.password = password;
+        user.phone = phone;
+        user.birthOfDate = birthOfDate;
+        user.gender = gender;
+        user.signupVerifyToken = signupVerifyToken;
 
-    await this.usersRepository.save(user);
+        await manager.save(user);
+      });
+    } catch (e) {
+      isTransectionReflected = false;
+    }
+
+    if (!isTransectionReflected) {
+      throw new InternalServerErrorException('User could not be created.');
+    }
 
     await this.sendMemberJoinEmail(email, signupVerifyToken);
 
