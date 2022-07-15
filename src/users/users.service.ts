@@ -1,10 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
+  async createUser(
+    name: string,
+    email: string,
+    password: string,
+    passwordCheck: string,
+  ) {
+    await this.checkUserExists(email);
+
+    await this.checkPasswordsIdentical(password, passwordCheck);
+
     return 'This action adds a new user';
   }
 
@@ -22,5 +31,17 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  private async checkUserExists(email: string) {
+    // todo DB
+    return false;
+  }
+  private async checkPasswordsIdentical(password, passwordCheck) {
+    if (password !== passwordCheck) {
+      throw new NotAcceptableException(
+        'Password and passwordCheck do not match.',
+      );
+    }
   }
 }
