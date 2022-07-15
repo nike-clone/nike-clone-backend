@@ -10,8 +10,4 @@ import { Repository } from 'typeorm';
   controllers: [UsersController],
   providers: [UsersService],
 })
-export class UsersModule {
-  constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
-  ) {}
-}
+export class UsersModule {}
