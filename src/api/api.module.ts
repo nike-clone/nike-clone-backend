@@ -9,6 +9,7 @@ import { UsersModule } from 'src/users/users.module';
   // controllers: [ApiController],
   imports: [
     AdminModule,
+    UsersModule,
     RouterModule.register([
       {
         path: 'api',

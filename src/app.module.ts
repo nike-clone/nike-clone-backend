@@ -33,8 +33,6 @@ console.log(OrmConfig);
     //   synchronize: true,
     // } as AuroraDataApiConnectionOptions),
     ApiModule,
-    ProductsModule,
-    UsersModule,
   ],
 })
 export class AppModule {}
