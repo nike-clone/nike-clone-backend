@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { Gender } from '../types/gender-type';
 
 @Entity('User')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
 
   @Column({ length: 60 })
   email: string;
@@ -23,6 +23,9 @@ export class User {
 
   @Column()
   gender: Gender;
+
+  @Column()
+  signupVerifyToken: string;
 
   @Column({ default: false })
   isAdmin: boolean;

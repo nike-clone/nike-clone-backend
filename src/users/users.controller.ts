@@ -22,8 +22,18 @@ export class UsersController {
 
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    const { name, email, password, passwordCheck } = createUserDto;
-    return this.usersService.createUser(name, email, password, passwordCheck);
+    const { email, password, passwordCheck, name, phone, birthOfDate, gender } =
+      createUserDto;
+
+    return this.usersService.createUser(
+      email,
+      password,
+      passwordCheck,
+      name,
+      phone,
+      birthOfDate,
+      gender,
+    );
   }
 
   @Post('/email-verify')
