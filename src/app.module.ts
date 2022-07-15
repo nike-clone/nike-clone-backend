@@ -8,6 +8,7 @@ import { ApiModule } from './api/api.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuroraDataApiConnectionOptions } from 'typeorm/driver/aurora-data-api/AuroraDataApiConnectionOptions';
+import { UsersModule } from './users/users.module';
 import OrmConfig from './ormConfig';
 
 console.log(OrmConfig);
@@ -33,6 +34,7 @@ console.log(OrmConfig);
     // } as AuroraDataApiConnectionOptions),
     ApiModule,
     ProductsModule,
+    UsersModule,
   ],
 })
 export class AppModule {}
