@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { ApiModule } from './api/api.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import OrmConfig from './ormConfig';
 
 console.log(OrmConfig);
@@ -29,6 +30,7 @@ console.log(OrmConfig);
     //   synchronize: true,
     // } as AuroraDataApiConnectionOptions),
     ApiModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
