@@ -2,7 +2,6 @@ import Mail = require('nodemailer/lib/mailer');
 import * as nodemailer from 'nodemailer';
 
 import { Injectable } from '@nestjs/common';
-import { sign } from 'crypto';
 
 interface EmailOptions {
   to: string;
