@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuroraDataApiConnectionOptions } from 'typeorm/driver/aurora-data-api/AuroraDataApiConnectionOptions';
 import { UsersModule } from './users/users.module';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
 import OrmConfig from './ormConfig';
 
 console.log(OrmConfig);
