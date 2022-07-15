@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,6 +14,7 @@ import * as uuid from 'uuid';
 import { EmailService } from 'src/email/email.service';
 
 import { Connection } from 'typeorm';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +22,7 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     private emailService: EmailService,
     private connection: Connection,
+    private authService: AuthService,
   ) {}
 
   async createUser(
@@ -70,8 +73,17 @@ export class UsersService {
   }
 
   async verifyEmail(signupVerifyToken: string): Promise<string> {
-    // todo: db
-    return;
+    const user = await this.usersRepository.findOne({ signupVerifyToken });
+
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다.');
+    }
+
+    return this.authService.login({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
   }
 
   findAll() {
