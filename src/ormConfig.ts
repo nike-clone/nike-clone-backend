@@ -1,6 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
-import { Category } from './category/entities/category.entity';
 
 const envFilePath = `${__dirname}/config/env/.${process.env.NODE_ENV}.env`;
 dotenv.config({ path: envFilePath });

@@ -1,9 +1,7 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { stringify } from 'querystring';
 import { Repository } from 'typeorm';
 import { ulid } from 'ulid';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Gender } from './types/gender-type';
