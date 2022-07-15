@@ -15,6 +15,7 @@ import { EmailService } from 'src/email/email.service';
 
 import { Connection } from 'typeorm';
 import { AuthService } from 'src/auth/auth.service';
+import { UserInfo } from './UserInfo';
 
 @Injectable()
 export class UsersService {
@@ -97,6 +98,20 @@ export class UsersService {
       name: user.name,
       email: user.email,
     });
+  }
+
+  async getUserInfo(userId: string): Promise<UserInfo> {
+    const user = await this.usersRepository.findOne({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다.');
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
   }
 
   findAll() {

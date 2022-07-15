@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 interface User {
   id: string;
@@ -18,5 +18,23 @@ export class AuthService {
       audience: process.env.BASE_URL,
       issuer: process.env.BASE_URL,
     });
+  }
+
+  verify(jwtString: string) {
+    try {
+      const payload = jwt.verify(
+        jwtString,
+        process.env.JWT_SECRET,
+      ) as jwt.JwtPayload;
+
+      const { id, email } = payload;
+
+      return {
+        userId: id,
+        email,
+      };
+    } catch (e) {
+      throw new UnauthorizedException();
+    }
   }
 }
