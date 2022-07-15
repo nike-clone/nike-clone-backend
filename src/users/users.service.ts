@@ -8,11 +8,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Gender } from './types/gender-type';
 import * as uuid from 'uuid';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    private emailService: EmailService,
   ) {}
 
   async createUser(
@@ -42,10 +44,17 @@ export class UsersService {
 
     await this.usersRepository.save(user);
 
+    await this.sendMemberJoinEmail(email, signupVerifyToken);
+
     return {
       message: 'User successfully created.',
       data: user,
     };
+  }
+
+  async verifyEmail(signupVerifyToken: string): Promise<string> {
+    // todo: db
+    return;
   }
 
   findAll() {
@@ -77,5 +86,12 @@ export class UsersService {
         'Password and passwordCheck do not match.',
       );
     }
+  }
+
+  private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
+    await this.emailService.sendMemberJoinVerification(
+      email,
+      signupVerifyToken,
+    );
   }
 }
