@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
-import { Gender } from '../types/gender-type';
+import { Gender } from '../types/gender.type';
+import { UserStatus } from '../types/user-status.type';
 
 @Entity('User')
 export class User {
@@ -26,6 +27,9 @@ export class User {
 
   @Column()
   signupVerifyToken: string;
+
+  @Column({ default: 'Proceeding' })
+  status: UserStatus;
 
   @Column({ default: false })
   isAdmin: boolean;

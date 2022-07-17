@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { ulid } from 'ulid';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Gender } from './types/gender-type';
+import { Gender } from './types/gender.type';
 import * as uuid from 'uuid';
 import { EmailService } from 'src/email/email.service';
 
@@ -79,6 +79,11 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('유저가 존재하지 않습니다.');
     }
+
+    user.status = 'Activated';
+
+    console.log(user);
+    await this.usersRepository.save(user);
 
     return this.authService.login({
       id: user.id,
