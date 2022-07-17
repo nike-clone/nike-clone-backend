@@ -80,6 +80,10 @@ export class UsersService {
       throw new NotFoundException('유저가 존재하지 않습니다.');
     }
 
+    if (user.status !== 'Proceeding') {
+      throw new NotAcceptableException('유효하지 않은 요청입니다.');
+    }
+
     user.status = 'Activated';
 
     console.log(user);
