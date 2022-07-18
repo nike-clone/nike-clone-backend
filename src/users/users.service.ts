@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
@@ -19,6 +20,7 @@ import { UserInfo } from './UserInfo';
 
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { asapScheduler } from 'rxjs';
 
 const scrypt = promisify(_scrypt);
 
@@ -45,7 +47,6 @@ export class UsersService {
     await this.checkPasswordsIdentical(password, passwordCheck);
 
     const hashedPassword = await this.saltAndHashPassword(password);
-    console.log(hashedPassword);
 
     const signupVerifyToken = uuid.v1();
 
@@ -105,10 +106,13 @@ export class UsersService {
   }
 
   async login(email: string, password: string): Promise<string> {
-    const user = await this.usersRepository.findOne({ email, password });
+    const user = await this.usersRepository.findOne({ email });
+
     if (!user) {
-      throw new NotFoundException('유저가 존재하지 않습니다.');
+      throw new BadRequestException('Wrong ID or Password.');
     }
+
+    await this.checkPasswordValidity(password, user.password);
 
     return this.authService.login({
       id: user.id,
@@ -174,5 +178,17 @@ export class UsersService {
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     const hashedPassword = `${salt}.${hash.toString('hex')}`;
     return hashedPassword;
+  }
+
+  private async checkPasswordValidity(
+    password: string,
+    storedPassword: string,
+  ) {
+    const [salt, storedHash] = storedPassword.split('.');
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    if (storedHash !== hash.toString('hex')) {
+      throw new BadRequestException('Wrong ID or Password.');
+    }
+    return;
   }
 }
