@@ -1,6 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
 
 interface User {
   id: string;
