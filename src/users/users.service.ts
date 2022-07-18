@@ -17,6 +17,11 @@ import { Connection } from 'typeorm';
 import { AuthService } from 'src/auth/auth.service';
 import { UserInfo } from './UserInfo';
 
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scrypt = promisify(_scrypt);
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -39,6 +44,9 @@ export class UsersService {
 
     await this.checkPasswordsIdentical(password, passwordCheck);
 
+    const hashedPassword = await this.saltAndHashPassword(password);
+    console.log(hashedPassword);
+
     const signupVerifyToken = uuid.v1();
 
     let isTransectionReflected = true;
@@ -49,7 +57,7 @@ export class UsersService {
         user.id = ulid();
         user.name = name;
         user.email = email;
-        user.password = password;
+        user.password = hashedPassword;
         user.phone = phone;
         user.birthOfDate = birthOfDate;
         user.gender = gender;
@@ -159,5 +167,12 @@ export class UsersService {
       email,
       signupVerifyToken,
     );
+  }
+
+  private async saltAndHashPassword(password) {
+    const salt = randomBytes(8).toString('hex');
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const hashedPassword = `${salt}.${hash.toString('hex')}`;
+    return hashedPassword;
   }
 }
