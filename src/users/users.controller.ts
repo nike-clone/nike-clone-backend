@@ -39,7 +39,9 @@ export class UsersController {
     const { signupVerifyToken } = dto;
     await this.usersService.verifyEmail(signupVerifyToken);
 
-    return res.redirect('http://localhost:3000/page/signup-success.html');
+    return res.redirect(
+      `${process.env.REDIRECTION_BASE_URL}/page/signup-success.html`,
+    );
   }
 
   @Post('/login')
