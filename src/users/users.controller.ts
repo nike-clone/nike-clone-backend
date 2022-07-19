@@ -17,7 +17,7 @@ import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { UserInfo } from './UserInfo';
 import { AuthService } from 'src/auth/auth.service';
-import { AuthGuard } from 'src/Guards/auth.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -28,18 +28,7 @@ export class UsersController {
 
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    const { email, password, passwordCheck, name, phone, birthOfDate, gender } =
-      createUserDto;
-
-    return this.usersService.createUser(
-      email,
-      password,
-      passwordCheck,
-      name,
-      phone,
-      birthOfDate,
-      gender,
-    );
+    return this.usersService.createUser(createUserDto);
   }
 
   @Post('/email-verify')
@@ -63,16 +52,13 @@ export class UsersController {
     return this.usersService.getUserInfo(userId);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
+  // TODO: User Update 구현
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  //   return this.usersService.update(+id, updateUserDto);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
+  @UseGuards()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

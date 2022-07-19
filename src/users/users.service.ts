@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { ulid } from 'ulid';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Gender } from './types/gender.type';
 import * as uuid from 'uuid';
 import { EmailService } from 'src/email/email.service';
 
@@ -20,7 +19,7 @@ import { UserInfo } from './UserInfo';
 
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
-import { asapScheduler } from 'rxjs';
+import { CreateUserDto } from './dto/create-user.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -33,15 +32,10 @@ export class UsersService {
     private authService: AuthService,
   ) {}
 
-  async createUser(
-    email: string,
-    password: string,
-    passwordCheck: string,
-    name: string,
-    phone: string,
-    birthOfDate: Date,
-    gender: Gender,
-  ) {
+  async createUser(createUserDto: Partial<CreateUserDto>) {
+    const { email, password, passwordCheck, name, phone, birthOfDate, gender } =
+      createUserDto;
+
     await this.checkUserExists(email);
 
     await this.checkPasswordsIdentical(password, passwordCheck);
@@ -78,7 +72,9 @@ export class UsersService {
 
     return {
       message: 'User successfully created.',
-      data: user,
+      data: {
+        email: user.email,
+      },
     };
   }
 
@@ -95,14 +91,9 @@ export class UsersService {
 
     user.status = 'Activated';
 
-    console.log(user);
     await this.usersRepository.save(user);
 
-    return this.authService.login({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    });
+    return 'Your account is succesfully registered. You can now login to the app.';
   }
 
   async login(email: string, password: string): Promise<string> {
@@ -135,17 +126,10 @@ export class UsersService {
     };
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  // TODO : User update 구현
+  // update(id: number, updateUserDto: UpdateUserDto) {
+  //   return `This action updates a #${id} user`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
