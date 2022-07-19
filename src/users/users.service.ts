@@ -102,6 +102,7 @@ export class UsersService {
       id: user.id,
       name: user.name,
       email: user.email,
+      isAdmin: user.isAdmin,
     });
   }
 
@@ -118,6 +119,7 @@ export class UsersService {
       id: user.id,
       name: user.name,
       email: user.email,
+      isAdmin: user.isAdmin,
     });
   }
 

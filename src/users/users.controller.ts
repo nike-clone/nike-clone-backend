@@ -17,7 +17,7 @@ import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { UserInfo } from './UserInfo';
 import { AuthService } from 'src/auth/auth.service';
-import { AuthGuard } from 'src/Guards/auth.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('users')
 export class UsersController {
