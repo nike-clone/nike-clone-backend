@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
+
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
@@ -15,8 +21,19 @@ export class AdminGuard implements CanActivate {
   }
 
   private validateAdmin(request: Request) {
-    const jwtString = request.headers.authorization.split('Bearer ')[1];
-    const userInfo = this.authService.verify(jwtString);
+
+    const token = request.headers.authorization;
+    if (!token) {
+      throw new BadRequestException('token error.');
+    }
+    const jwtString = token.split('Bearer ');
+    if (!token) {
+      throw new BadRequestException('token error.');
+    }
+    const jwt = jwtString[1];
+
+    const userInfo = this.authService.verify(jwt);
+
 
     return userInfo.isAdmin;
   }
