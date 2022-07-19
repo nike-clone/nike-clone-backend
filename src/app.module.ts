@@ -8,6 +8,13 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import OrmConfig from './ormConfig';
 
+import {
+  ServeStaticModule,
+  ServeStaticModuleOptions,
+} from '@nestjs/serve-static';
+import { join, resolve } from 'path';
+import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
+
 console.log(OrmConfig);
 @Module({
   controllers: [AppController],
@@ -31,6 +38,19 @@ console.log(OrmConfig);
     // } as AuroraDataApiConnectionOptions),
     ApiModule,
     AuthModule,
+    ServeStaticModule.forRoot(
+      (() => {
+        const publicDir = resolve('./static/views');
+        const servePath = 'views';
+
+        return {
+          rootPath: publicDir,
+          serveRoot: '/page',
+          // renderPath: '/page',
+          exclude: ['/api*'],
+        } as ServeStaticModuleOptions;
+      })(),
+    ),
   ],
 })
 export class AppModule {}
