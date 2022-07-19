@@ -9,6 +9,8 @@ import {
   Query,
   Headers,
   UseGuards,
+  Redirect,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +20,7 @@ import { UserLoginDto } from './dto/user-login.dto';
 import { UserInfo } from './UserInfo';
 import { AuthService } from 'src/auth/auth.service';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -32,9 +35,11 @@ export class UsersController {
   }
 
   @Post('/email-verify')
-  async verifyEmail(@Query() dto: VerifyEmailDto): Promise<string> {
+  async verifyEmail(@Query() dto: VerifyEmailDto, @Res() res: Response) {
     const { signupVerifyToken } = dto;
-    return await this.usersService.verifyEmail(signupVerifyToken);
+    await this.usersService.verifyEmail(signupVerifyToken);
+
+    return res.redirect('http://localhost:3000/page/signup-success.html');
   }
 
   @Post('/login')

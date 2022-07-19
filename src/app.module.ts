@@ -12,8 +12,7 @@ import {
   ServeStaticModule,
   ServeStaticModuleOptions,
 } from '@nestjs/serve-static';
-import { join, resolve } from 'path';
-import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
+import { resolve } from 'path';
 
 console.log(OrmConfig);
 @Module({
@@ -42,12 +41,10 @@ console.log(OrmConfig);
     ServeStaticModule.forRoot(
       (() => {
         const publicDir = resolve('./static/views');
-        const servePath = 'views';
 
         return {
           rootPath: publicDir,
           serveRoot: '/page',
-          // renderPath: '/page',
           exclude: ['/api*'],
         } as ServeStaticModuleOptions;
       })(),
