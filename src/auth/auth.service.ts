@@ -7,6 +7,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  isAdmin: boolean;
 }
 
 @Injectable()
@@ -28,11 +29,12 @@ export class AuthService {
         process.env.JWT_SECRET,
       ) as jwt.JwtPayload;
 
-      const { id, email } = payload;
+      const { id, email, isAdmin } = payload;
 
       return {
         userId: id,
         email,
+        isAdmin,
       };
     } catch (e) {
       throw new UnauthorizedException();

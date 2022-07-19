@@ -72,6 +72,7 @@ export class UsersService {
 
     return {
       message: 'User successfully created.',
+
       data: {
         email: user.email,
       },
@@ -109,6 +110,7 @@ export class UsersService {
       id: user.id,
       name: user.name,
       email: user.email,
+      isAdmin: user.isAdmin,
     });
   }
 
