@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import { AdminGuard } from 'src/guards/admin.guard';
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
@@ -7,6 +17,7 @@ import { UpdateBannerDto } from './dto/update-banner.dto';
 export class BannersController {
   constructor(private readonly bannersService: BannersService) {}
 
+  @UseGuards(AdminGuard)
   @Post()
   create(@Body() createBannerDto: CreateBannerDto) {
     return this.bannersService.create(createBannerDto);
