@@ -25,11 +25,11 @@ export class User {
   @Column()
   gender: Gender;
 
-  @Column()
-  signupVerifyToken: string;
+  // @Column()
+  // signupVerifyToken: string;
 
-  @Column({ default: 'Proceeding' })
-  status: UserStatus;
+  // @Column({ default: 'Proceeding' })
+  // status: UserStatus;
 
   @Column({ default: false })
   isAdmin: boolean;
