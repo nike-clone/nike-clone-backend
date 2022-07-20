@@ -33,6 +33,46 @@ export class UsersService {
     private authService: AuthService,
   ) {}
 
+  async signup(createUserDto: Partial<CreateUserDto>) {
+    const { email, password, passwordCheck, name, phone, birthOfDate, gender } =
+      createUserDto;
+    await this.checkUserExists(email);
+
+    await this.checkPasswordsIdentical(password, passwordCheck);
+
+    const hashedPassword = await this.saltAndHashPassword(password);
+
+    let isTransectionReflected = true;
+    let user;
+    try {
+      await this.connection.transaction(async (manager) => {
+        user = new User();
+        user.id = ulid();
+        user.name = name;
+        user.email = email;
+        user.password = hashedPassword;
+        user.phone = phone;
+        user.birthOfDate = birthOfDate;
+        user.gender = gender;
+
+        await manager.save(user);
+      });
+    } catch (e) {
+      isTransectionReflected = false;
+    }
+
+    if (!isTransectionReflected) {
+      throw new InternalServerErrorException('User could not be created.');
+    }
+
+    return this.authService.login({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
+  }
+
   async createUser(createUserDto: Partial<CreateUserDto>) {
     const { email, password, passwordCheck, name, phone, birthOfDate, gender } =
       createUserDto;
@@ -78,23 +118,23 @@ export class UsersService {
     };
   }
 
-  async verifyEmail(signupVerifyToken: string) {
-    const user = await this.usersRepository.findOne({ signupVerifyToken });
+  // async verifyEmail(signupVerifyToken: string) {
+  //   const user = await this.usersRepository.findOne({ signupVerifyToken });
 
-    if (!user) {
-      throw new NotFoundException('유저가 존재하지 않습니다.');
-    }
+  //   if (!user) {
+  //     throw new NotFoundException('유저가 존재하지 않습니다.');
+  //   }
 
-    if (user.status !== 'Proceeding') {
-      throw new NotAcceptableException('유효하지 않은 요청입니다.');
-    }
+  //   if (user.status !== 'Proceeding') {
+  //     throw new NotAcceptableException('유효하지 않은 요청입니다.');
+  //   }
 
-    user.status = 'Activated';
+  //   user.status = 'Activated';
 
-    await this.usersRepository.save(user);
+  //   await this.usersRepository.save(user);
 
-    return;
-  }
+  //   return;
+  // }
 
   async login(email: string, password: string): Promise<string> {
     const user = await this.usersRepository.findOne({ email });

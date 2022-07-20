@@ -30,18 +30,18 @@ export class UsersController {
 
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+    return this.usersService.signup(createUserDto);
   }
 
-  @Post('/email-verify')
-  async verifyEmail(@Query() dto: VerifyEmailDto, @Res() res) {
-    const { signupVerifyToken } = dto;
-    await this.usersService.verifyEmail(signupVerifyToken);
+  // @Post('/email-verify')
+  // async verifyEmail(@Query() dto: VerifyEmailDto, @Res() res) {
+  //   const { signupVerifyToken } = dto;
+  //   await this.usersService.verifyEmail(signupVerifyToken);
 
-    return res.redirect(
-      `${process.env.REDIRECTION_BASE_URL}/page/signup-success.html`,
-    );
-  }
+  //   return res.redirect(
+  //     `${process.env.REDIRECTION_BASE_URL}/page/signup-success.html`,
+  //   );
+  // }
 
   @Post('/login')
   async login(@Body() dto: UserLoginDto): Promise<string> {
