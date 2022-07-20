@@ -2,10 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 
+import { Repository } from 'typeorm';
+import { Banner } from './entities/banner.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+
 @Injectable()
 export class BannersService {
-  create(createBannerDto: CreateBannerDto) {
-    return 'This action adds a new banner';
+  constructor(
+    @InjectRepository(Banner) private bannersRepository: Repository<Banner>,
+  ) {}
+
+  async create(createBannerDto: CreateBannerDto) {
+    const { imagePath, content, type } = createBannerDto;
+    const banner = new Banner();
+    Object.assign(banner, {
+      imagePath,
+      content,
+      type,
+    });
+
+    return await this.bannersRepository.save(banner);
   }
 
   findAll() {

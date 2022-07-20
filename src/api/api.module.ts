@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { AdminModule } from 'src/admin/admin.module';
+import { BannersModule } from 'src/banners/banners.module';
 import { CategoryModule } from 'src/category/category.module';
 import { ProductsModule } from 'src/products/products.module';
 import { UsersModule } from 'src/users/users.module';
@@ -10,6 +11,7 @@ import { UsersModule } from 'src/users/users.module';
   imports: [
     AdminModule,
     UsersModule,
+    BannersModule,
     RouterModule.register([
       {
         path: 'api',
@@ -28,6 +30,10 @@ import { UsersModule } from 'src/users/users.module';
       {
         path: 'api',
         module: UsersModule,
+      },
+      {
+        path: 'api',
+        module: BannersModule,
       },
     ]),
   ],
