@@ -9,6 +9,8 @@ import {
   Query,
   Headers,
   UseGuards,
+  Redirect,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,24 +30,17 @@ export class UsersController {
 
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    const { email, password, passwordCheck, name, phone, birthOfDate, gender } =
-      createUserDto;
-
-    return this.usersService.createUser(
-      email,
-      password,
-      passwordCheck,
-      name,
-      phone,
-      birthOfDate,
-      gender,
-    );
+    return this.usersService.createUser(createUserDto);
   }
 
   @Post('/email-verify')
-  async verifyEmail(@Query() dto: VerifyEmailDto): Promise<string> {
+  async verifyEmail(@Query() dto: VerifyEmailDto, @Res() res) {
     const { signupVerifyToken } = dto;
-    return await this.usersService.verifyEmail(signupVerifyToken);
+    await this.usersService.verifyEmail(signupVerifyToken);
+
+    return res.redirect(
+      `${process.env.REDIRECTION_BASE_URL}/page/signup-success.html`,
+    );
   }
 
   @Post('/login')
@@ -63,18 +58,15 @@ export class UsersController {
     return this.usersService.getUserInfo(userId);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
+  // TODO : User update 구현
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  //   return this.usersService.update(+id, updateUserDto);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
+  // TODO: User delete 구현
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.usersService.remove(+id);
+  // }
 }
