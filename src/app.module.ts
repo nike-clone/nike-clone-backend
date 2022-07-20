@@ -52,7 +52,6 @@ console.log(OrmConfig);
         } as ServeStaticModuleOptions;
       })(),
     ),
-    BannersModule,
   ],
 })
 export class AppModule {}

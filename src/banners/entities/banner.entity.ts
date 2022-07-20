@@ -1,6 +1,7 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BannerType } from '../types/banner.type';
 
+@Entity('Banner')
 export class Banner {
   @PrimaryGeneratedColumn()
   id: number;
@@ -8,7 +9,7 @@ export class Banner {
   @Column()
   imagePath: string;
 
-  @Column({ length: 65535 })
+  @Column('text')
   content: string;
 
   @Column()
