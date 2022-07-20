@@ -14,6 +14,7 @@ import {
 } from '@nestjs/serve-static';
 import { join, resolve } from 'path';
 import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
+import { BannersModule } from './banners/banners.module';
 
 console.log(OrmConfig);
 @Module({
@@ -51,6 +52,7 @@ console.log(OrmConfig);
         } as ServeStaticModuleOptions;
       })(),
     ),
+    BannersModule,
   ],
 })
 export class AppModule {}
