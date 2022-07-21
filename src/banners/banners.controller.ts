@@ -39,6 +39,7 @@ export class BannersController {
     return this.bannersService.update(+id, updateBannerDto);
   }
 
+  @UseGuards(AdminGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.bannersService.remove(+id);

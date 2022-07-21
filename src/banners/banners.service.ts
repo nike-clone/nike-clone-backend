@@ -57,7 +57,16 @@ export class BannersService {
     return await this.bannersRepository.save(banner);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} banner`;
+  async remove(id: number) {
+    const banner = await this.bannersRepository.findOne(id);
+    if (!banner) {
+      throw new NotFoundException(`No banner with id ${id}`);
+    }
+
+    await this.bannersRepository.remove(banner);
+
+    return {
+      message: `The banner (id: ${id}) was successfully removed. `,
+    };
   }
 }
