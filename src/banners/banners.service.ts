@@ -24,8 +24,12 @@ export class BannersService {
     return await this.bannersRepository.save(banner);
   }
 
-  findAll() {
-    return this.bannersRepository.find();
+  findAll(type) {
+    let query;
+    if (type) {
+      query = { where: { type } };
+    }
+    return this.bannersRepository.find(query);
   }
 
   async findOne(id: number) {
