@@ -1,10 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 
 import { Repository } from 'typeorm';
 import { Banner } from './entities/banner.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotFoundError } from 'rxjs';
+import { BannersController } from './banners.controller';
+
+enum BannerType {
+  Main = 'Main',
+  Promotion = 'Promotion',
+}
 
 @Injectable()
 export class BannersService {
@@ -32,8 +43,18 @@ export class BannersService {
     return `This action returns a #${id} banner`;
   }
 
-  update(id: number, updateBannerDto: UpdateBannerDto) {
-    return `This action updates a #${id} banner`;
+  async update(id: number, updateBannerDto: UpdateBannerDto) {
+    // console.log(updateBannerDto);
+
+    const banner = await this.bannersRepository.findOne(id);
+
+    if (!banner) {
+      throw new NotFoundException(`No banner with id ${id}`);
+    }
+
+    Object.assign(banner, updateBannerDto);
+
+    return await this.bannersRepository.save(banner);
   }
 
   remove(id: number) {

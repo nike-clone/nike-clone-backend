@@ -33,6 +33,7 @@ export class BannersController {
     return this.bannersService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBannerDto: UpdateBannerDto) {
     return this.bannersService.update(+id, updateBannerDto);

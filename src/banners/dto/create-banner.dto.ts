@@ -1,5 +1,10 @@
-import { IsString } from 'class-validator';
-import { BannerType } from '../types/banner.type';
+import { IsEnum, IsString } from 'class-validator';
+// import { BannerType } from '../types/banner.type';
+
+enum BannerType {
+  Main = 'Main',
+  Promotion = 'Promotion',
+}
 
 export class CreateBannerDto {
   @IsString()
@@ -8,5 +13,7 @@ export class CreateBannerDto {
   @IsString()
   content: string;
 
+  @IsString()
+  @IsEnum(BannerType)
   type: BannerType;
 }
