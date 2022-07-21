@@ -1,10 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { CreateBannerDto } from './create-banner.dto';
-enum BannerType {
-  Main = 'Main',
-  Promotion = 'Promotion',
-}
+import { BannerType } from '../types/banner.type';
 
 export class UpdateBannerDto extends PartialType(CreateBannerDto) {
   @IsOptional()

@@ -7,7 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
+import { IsEnum } from 'class-validator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
@@ -24,8 +26,8 @@ export class BannersController {
   }
 
   @Get()
-  findAll() {
-    return this.bannersService.findAll();
+  findAll(@Query('type') type: string) {
+    return this.bannersService.findAll(type);
   }
 
   @Get(':id')

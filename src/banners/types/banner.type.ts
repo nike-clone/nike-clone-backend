@@ -1,1 +1,4 @@
-export type BannerType = 'Main' | 'Promotion';
+export enum BannerType {
+  Main = 'Main',
+  Promotion = 'Promotion',
+}
