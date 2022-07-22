@@ -6,5 +6,8 @@ export class Color {
   id: number;
 
   @Column()
+  name: string;
+
+  @Column()
   colorCode: string;
 }
