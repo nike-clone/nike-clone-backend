@@ -23,7 +23,7 @@ VALUES
 
 ALTER DATABASE nike_clone CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-INSERT INTO size (size)
+INSERT INTO size (id)
 VALUES
   (220),
   (225),
@@ -52,9 +52,10 @@ VALUES
   (380);
 
 
-INSERT INTO goods (price, imagePath, genderId, colorId, size)
+INSERT INTO goods (name, rice, imagePath, genderId, colorId, size)
 VALUES 
   (
+    '에어 조던 6 레트로',
     50000, 
     'https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/CT8529-141/cd01fbf3-0385-4c77-ae6b-7d04e4d78bdf_primary.jpg?gallery',
     1,

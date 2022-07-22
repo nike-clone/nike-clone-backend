@@ -15,6 +15,9 @@ export class Goods {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  name: string;
+
   @OneToOne(() => Gender)
   @JoinColumn()
   gender: Gender;
@@ -37,7 +40,7 @@ export class Goods {
   sizeId: number;
 
   @Column()
-  prices: number;
+  price: number;
 
   @Column()
   imagePath: string;
