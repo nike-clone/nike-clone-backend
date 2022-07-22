@@ -25,15 +25,15 @@ import { UsersModule } from 'src/users/users.module';
             path: 'admin',
             module: ProductsModule,
           },
+          {
+            path: 'api',
+            module: BannersModule,
+          },
         ],
       },
       {
         path: 'api',
         module: UsersModule,
-      },
-      {
-        path: 'api',
-        module: BannersModule,
       },
     ]),
   ],
