@@ -16,7 +16,7 @@ export class OrmConfig {
           username: process.env.DATABASE_USERNAME,
           password: process.env.DATABASE_PASSWORD,
           database: process.env.DATABASE_NAME,
-          // enities: [__dirname + '/**/*.entity{.ts,.js}'],
+          enities: [__dirname + '/**/*.entity{.ts,.js}'],
           // entities: [Category],
           autoLoadEntities: true,
           synchronize: true,
