@@ -2,6 +2,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
@@ -18,30 +20,21 @@ export class Goods {
   @Column()
   name: string;
 
-  @OneToOne(() => Gender)
-  @JoinColumn()
-  gender: Gender;
-
-  @RelationId((goods: Goods) => goods.gender)
-  genderId: number;
-
-  @OneToOne(() => Color)
-  @JoinColumn()
-  color: string;
-
-  @RelationId((goods: Goods) => goods.color)
-  colorId: number;
-
-  @OneToOne(() => Size)
-  @JoinColumn()
-  size: number;
-
-  @RelationId((goods: Goods) => goods.size)
-  sizeId: number;
-
   @Column()
   price: number;
 
   @Column()
   imagePath: string;
+
+  @ManyToOne(() => Gender, (gender) => gender.goods)
+  @JoinColumn()
+  gender: Gender;
+
+  @ManyToOne(() => Color, (color) => color.goods)
+  @JoinColumn()
+  color: Color;
+
+  @ManyToOne(() => Size, (size) => size.goods)
+  @JoinColumn()
+  size: Size;
 }

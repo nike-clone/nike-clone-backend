@@ -22,7 +22,22 @@ export class GoodsController {
 
   @Get()
   findAll() {
-    return this.goodsService.findAll();
+    return this.goodsService.findAllGoods();
+  }
+
+  @Get('/sizes')
+  getAllSizes() {
+    return this.goodsService.findAllSizes();
+  }
+
+  @Get('/colors')
+  getAllColors() {
+    return this.goodsService.findAllColors();
+  }
+
+  @Get('/genders')
+  getAllGenders() {
+    return this.goodsService.findAllGenders();
   }
 
   @Get(':id')
