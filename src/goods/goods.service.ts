@@ -3,28 +3,67 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { UpdateGoodsDto } from './dto/update-goods.dto';
+import { Color } from './entities/colors.entity';
+import { Gender } from './entities/genders.eitity';
 import { Goods } from './entities/goods.entity';
+import { Size } from './entities/sizes.entity';
 
 @Injectable()
 export class GoodsService {
   constructor(
     @InjectRepository(Goods) private goodsRepository: Repository<Goods>,
+    @InjectRepository(Size) private sizeRepository: Repository<Size>,
+    @InjectRepository(Color) private colorRepository: Repository<Color>,
+    @InjectRepository(Gender) private genderRepository: Repository<Gender>,
   ) {}
 
-  create(createGoodDto: CreateGoodsDto) {
-    return 'This action adds a new good';
+  async create(createGoodDto: CreateGoodsDto) {
+    const { name, price, imagePath, gender, color, size } = createGoodDto;
+
+    const selectedColor = await this.colorRepository.findOne({ name: color });
+    const selectedGender = await this.genderRepository.findOne({ gender });
+    const selectedSize = await this.sizeRepository.findOne({ id: size });
+
+    const goods = new Goods();
+    goods.name = name;
+    goods.price = price;
+    goods.imagePath = imagePath;
+    goods.color = selectedColor;
+    goods.gender = selectedGender;
+    goods.size = selectedSize;
+
+    return this.goodsRepository.save(goods);
   }
 
-  async findAll() {
+  async findAllGoods() {
     const result = await this.goodsRepository.find({
-      relations: ['gender', 'color', 'size'],
+      relations: ['color', 'gender', 'size'],
     });
 
     return result;
   }
 
+  async findAllSizes() {
+    const result = await this.sizeRepository.find();
+    const sizes = [];
+    for (const el of result) {
+      sizes.push(el.id);
+    }
+    return sizes;
+  }
+
+  async findAllColors() {
+    return await this.colorRepository.find();
+  }
+
+  async findAllGenders() {
+    return await this.genderRepository.find();
+  }
+
   findOne(id: number) {
-    return `This action returns a #${id} good`;
+    return this.goodsRepository.findOne(id, {
+      relations: ['color', 'gender', 'size'],
+    });
   }
 
   update(id: number, updateGoodDto: UpdateGoodsDto) {

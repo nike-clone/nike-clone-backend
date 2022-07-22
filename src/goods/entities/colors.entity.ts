@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Goods } from './goods.entity';
 
 @Entity()
 export class Color {
@@ -10,4 +17,7 @@ export class Color {
 
   @Column()
   colorCode: string;
+
+  @OneToMany((type) => Goods, (goods) => goods.color)
+  goods: Goods[];
 }

@@ -1,5 +1,5 @@
-INSERT INTO gender(gender)
-VALUES ('Male'), ('Female');
+INSERT INTO gender(gender, name)
+VALUES ('Male', "남성"), ('Female', "여성"), ('Unisex', "성인공용");
 
 INSERT INTO color(colorCode, name)
 VALUES

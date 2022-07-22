@@ -1,4 +1,5 @@
 import { IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsSize } from '../decorators/is-size.decorator';
 import { GenderType } from '../types/gender.type';
 
 export class CreateGoodsDto {
@@ -11,7 +12,9 @@ export class CreateGoodsDto {
   @IsString()
   imagePath: string;
 
-  @IsEnum(GenderType, { message: `Gender must be either 'Male' or 'Female'.` })
+  @IsEnum(GenderType, {
+    message: `Gender must be 'Male', 'Female' or 'Unisex'.`,
+  })
   gender: string;
 
   @IsString()
@@ -20,5 +23,6 @@ export class CreateGoodsDto {
   @IsNumber()
   @Min(220)
   @Max(380)
+  @IsSize()
   size: number;
 }
