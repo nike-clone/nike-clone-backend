@@ -23,6 +23,6 @@ export class CreateGoodsDto {
   @IsNumber()
   @Min(220)
   @Max(380)
-  @IsSize()
+  @IsSize({ message: 'Unacceptable size value.' })
   size: number;
 }
