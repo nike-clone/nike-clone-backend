@@ -18,6 +18,9 @@ export class CreateGoodsDto {
   })
   gender: string;
 
+  @IsNumber()
+  stock: number;
+
   @IsColor({ message: 'Unacceptable color value.' })
   @IsString()
   color: string;
