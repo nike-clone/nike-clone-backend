@@ -53,7 +53,6 @@ console.log(OrmConfig);
         } as ServeStaticModuleOptions;
       })(),
     ),
-    GoodsModule,
   ],
 })
 export class AppModule {}
