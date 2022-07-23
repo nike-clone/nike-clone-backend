@@ -9,7 +9,7 @@ import {
   RelationId,
 } from 'typeorm';
 import { Color } from './colors.entity';
-import { Gender } from './genders.eitity';
+import { Gender } from './genders.entity';
 import { Size } from './sizes.entity';
 
 @Entity()

@@ -135,7 +135,7 @@ export class UsersService {
   // }
 
   async login(email: string, password: string): Promise<string> {
-    const user = await this.usersRepository.findOne({ email });
+    const user = await this.usersRepository.findOne({ where: { email } });
 
     if (!user) {
       throw new BadRequestException('Wrong ID or Password.');
@@ -152,7 +152,7 @@ export class UsersService {
   }
 
   async getUserInfo(userId: string): Promise<UserInfo> {
-    const user = await this.usersRepository.findOne({ id: userId });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
 
     if (!user) {
       throw new NotFoundException('유저가 존재하지 않습니다.');
@@ -176,7 +176,7 @@ export class UsersService {
   // }
 
   private async checkUserExists(email: string) {
-    const user = await this.usersRepository.findOne({ email });
+    const user = await this.usersRepository.findOne({ where: { email } });
     if (user) {
       throw new NotAcceptableException('User already exists.');
     }
