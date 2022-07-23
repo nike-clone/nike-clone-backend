@@ -18,6 +18,7 @@ export class OrmConfig {
           database: process.env.DATABASE_NAME,
           enities: [__dirname + '/**/*.entity{.ts,.js}'],
           // entities: [Category],
+          migrations: [__dirname + '/migrations/*.ts'],
           autoLoadEntities: true,
           synchronize: true,
         } as TypeOrmModuleOptions;
@@ -31,6 +32,7 @@ export class OrmConfig {
           password: process.env.DATABASE_PASSWORD,
           database: process.env.DATABASE_NAME,
           // entities: [process.env.DATABASE_ENTITIES],
+          migrations: [__dirname + '/migrations/*.ts'],
           autoLoadEntities: true,
         } as TypeOrmModuleOptions;
         break;
