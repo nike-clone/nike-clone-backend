@@ -38,7 +38,7 @@ export class CategoryService {
   }
 
   async findOne(id: number) {
-    const category = await this.categoryRepository.findOne(id);
+    const category = await this.categoryRepository.findOne({ where: { id } });
     if (!category) {
       throw new NotFoundException('Category id not registered.');
     }
@@ -63,7 +63,7 @@ export class CategoryService {
   }
 
   async remove(id: number) {
-    const category = await this.categoryRepository.findOne(id);
+    const category = await this.categoryRepository.findOne({ where: { id } });
     if (!category) {
       throw new NotFoundException('Category id not registered.');
     }
@@ -75,13 +75,15 @@ export class CategoryService {
   }
 
   private async checkCategoryExistsByName(name) {
-    const category = await this.categoryRepository.findOne({ name });
+    const category = await this.categoryRepository.findOne({ where: { name } });
 
     return category !== undefined;
   }
 
   private async checkCategoryExistsById(id) {
-    const category = await this.categoryRepository.findOne(+id);
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+    });
 
     return category !== undefined;
   }

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { UpdateGoodsDto } from './dto/update-goods.dto';
 import { Color } from './entities/colors.entity';
-import { Gender } from './entities/genders.eitity';
+import { Gender } from './entities/genders.entity';
 import { Goods } from './entities/goods.entity';
 import { Size } from './entities/sizes.entity';
 
@@ -20,9 +20,15 @@ export class GoodsService {
   async create(createGoodDto: CreateGoodsDto) {
     const { name, price, imagePath, gender, color, size } = createGoodDto;
 
-    const selectedColor = await this.colorRepository.findOne({ name: color });
-    const selectedGender = await this.genderRepository.findOne({ gender });
-    const selectedSize = await this.sizeRepository.findOne({ id: size });
+    const selectedColor = await this.colorRepository.findOne({
+      where: { name: color },
+    });
+    const selectedGender = await this.genderRepository.findOne({
+      where: { gender },
+    });
+    const selectedSize = await this.sizeRepository.findOne({
+      where: { id: size },
+    });
 
     const goods = new Goods();
     goods.name = name;
@@ -61,7 +67,8 @@ export class GoodsService {
   }
 
   findOne(id: number) {
-    return this.goodsRepository.findOne(id, {
+    return this.goodsRepository.findOne({
+      where: { id },
       relations: ['color', 'gender', 'size'],
     });
   }
