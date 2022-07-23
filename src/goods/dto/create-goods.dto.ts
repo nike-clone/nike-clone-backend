@@ -1,4 +1,5 @@
 import { IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsColor } from '../decorators/is-color.decorator';
 import { IsSize } from '../decorators/is-size.decorator';
 import { GenderType } from '../types/gender.type';
 
@@ -17,6 +18,7 @@ export class CreateGoodsDto {
   })
   gender: string;
 
+  @IsColor({ message: 'Unacceptable color value.' })
   @IsString()
   color: string;
 

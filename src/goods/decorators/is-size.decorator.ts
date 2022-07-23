@@ -6,7 +6,7 @@ import {
 import internal from 'stream';
 
 export function IsSize(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: any, propertyName: string) {
     registerDecorator({
       name: 'isSize',
       target: object.constructor,
@@ -15,7 +15,6 @@ export function IsSize(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any, args: ValidationArguments) {
-          const [relatedPropertyName] = args.constraints;
           // const relatedValue = (args.object as any)[relatedPropertyName];
           const sizes = [
             220, 225, 230, 235, 240, 245, 250, 255, 260, 265, 270, 275, 280,
