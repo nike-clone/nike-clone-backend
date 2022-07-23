@@ -18,8 +18,8 @@ export class IsColorConstraint implements ValidatorConstraintInterface {
   ) {}
 
   async validate(color: any, args: ValidationArguments) {
-    const selectedColor = await this.colorRepository.findOne(color);
-    console.log(selectedColor);
+    const selectedColor = await this.colorRepository.findOne({ name: color });
+
     if (!selectedColor) {
       return false;
     }
