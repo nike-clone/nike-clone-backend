@@ -33,7 +33,7 @@ export class BannersService {
   }
 
   async findOne(id: number) {
-    const banner = await this.bannersRepository.findOne(id);
+    const banner = await this.bannersRepository.findOne({ where: { id } });
 
     if (!banner) {
       throw new NotFoundException(`No banner with id ${id}`);
@@ -43,7 +43,7 @@ export class BannersService {
   }
 
   async update(id: number, updateBannerDto: UpdateBannerDto) {
-    const banner = await this.bannersRepository.findOne(id);
+    const banner = await this.bannersRepository.findOne({ where: { id } });
 
     if (!banner) {
       throw new NotFoundException(`No banner with id ${id}`);
@@ -55,7 +55,7 @@ export class BannersService {
   }
 
   async remove(id: number) {
-    const banner = await this.bannersRepository.findOne(id);
+    const banner = await this.bannersRepository.findOne({ where: { id } });
     if (!banner) {
       throw new NotFoundException(`No banner with id ${id}`);
     }
