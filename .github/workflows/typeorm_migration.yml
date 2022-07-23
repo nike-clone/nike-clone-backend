@@ -8,6 +8,6 @@ jobs:
   migration:
     runs-on: ubuntu-latest
     steps:
-      - run: npm run typeorm:generate src/migrations/initial-schema
+      - run: npm run typeorm:generate src/migrations
       - run: npm run typeorm migration:run
       
