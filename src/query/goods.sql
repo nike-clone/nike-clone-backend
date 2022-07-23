@@ -72,3 +72,14 @@ from goods
   on goods.colorId = color.id
   join size
   on goods.size = size.size;
+
+
+{
+    "name": "나이키 에어 포스 1 로우 레트로",
+    "price": 179000,
+    "imagePath": "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DJ3911-100/25dbab0b-257b-463a-9a02-4d399843cb93_primary.jpg?gallery",
+    "gender": "Male",
+    "color": "흰색",
+    "size": 250
+}
+

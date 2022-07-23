@@ -26,6 +26,9 @@ export class Goods {
   @Column()
   imagePath: string;
 
+  @Column({ default: 10 })
+  stock: number;
+
   @ManyToOne(() => Gender, (gender) => gender.goods)
   @JoinColumn()
   gender: Gender;

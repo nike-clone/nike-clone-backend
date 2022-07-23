@@ -18,7 +18,8 @@ export class GoodsService {
   ) {}
 
   async create(createGoodDto: CreateGoodsDto) {
-    const { name, price, imagePath, gender, color, size } = createGoodDto;
+    const { name, price, imagePath, gender, color, size, stock } =
+      createGoodDto;
 
     const selectedColor = await this.colorRepository.findOne({
       where: { name: color },
@@ -37,6 +38,7 @@ export class GoodsService {
     goods.color = selectedColor;
     goods.gender = selectedGender;
     goods.size = selectedSize;
+    goods.stock = stock;
 
     return this.goodsRepository.save(goods);
   }
