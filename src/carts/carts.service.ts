@@ -27,6 +27,23 @@ export class CartsService {
     return this.cartsRepository.save(cart);
   }
 
+  async findCartByUserId(userId: string) {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    const cart = await this.cartsRepository.findOne({
+      where: { user },
+    });
+
+    if (!cart) {
+      throw new NotFoundException('Cart not found.');
+    }
+
+    return cart;
+  }
+
   findAll() {
     return `This action returns all carts`;
   }

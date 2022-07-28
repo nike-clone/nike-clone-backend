@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
+import { QueryRequired } from 'src/decorators/query-required.decorator';
 import { CartsService } from './carts.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
@@ -10,6 +20,11 @@ export class CartsController {
   @Post()
   create(@Body() createCartDto: CreateCartDto) {
     return this.cartsService.create(createCartDto);
+  }
+
+  @Get('/user')
+  findCartByUserId(@QueryRequired('userId') userId: string) {
+    return this.cartsService.findCartByUserId(userId);
   }
 
   @Get()
