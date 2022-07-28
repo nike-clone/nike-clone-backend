@@ -1,9 +1,11 @@
+import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
@@ -40,4 +42,16 @@ export class Goods {
   @ManyToOne(() => Size, (size) => size.goods)
   @JoinColumn()
   size: Size;
+
+  @OneToMany(() => CartItems, (cartItem) => cartItem.goods)
+  cartItems: CartItems[];
+
+  @RelationId((goods: Goods) => goods.gender)
+  genderId: number;
+
+  @RelationId((goods: Goods) => goods.color)
+  colorId: number;
+
+  @RelationId((goods: Goods) => goods.size)
+  sizeId: number;
 }

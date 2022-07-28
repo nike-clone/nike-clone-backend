@@ -1,8 +1,10 @@
+import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
@@ -19,4 +21,7 @@ export class Cart {
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
+
+  @OneToMany(() => CartItems, (cartItem) => cartItem.cart)
+  cartItems: CartItems[];
 }
