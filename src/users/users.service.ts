@@ -19,6 +19,7 @@ import { UserInfo } from './UserInfo';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CartsService } from 'src/carts/carts.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -29,6 +30,7 @@ export class UsersService {
     private emailService: EmailService,
     private connection: Connection,
     private authService: AuthService,
+    private cartsService: CartsService,
   ) {}
 
   async signup(createUserDto: Partial<CreateUserDto>) {
@@ -57,11 +59,14 @@ export class UsersService {
       });
     } catch (e) {
       isTransectionReflected = false;
+      console.log(e);
     }
 
     if (!isTransectionReflected) {
       throw new InternalServerErrorException('User could not be created.');
     }
+
+    await this.cartsService.create(user.id);
 
     return this.authService.login({
       id: user.id,

@@ -9,7 +9,7 @@ import {
 import { Gender } from '../types/gender.type';
 // import { UserStatus } from '../types/user-status.type';
 
-@Entity('User')
+@Entity()
 export class User {
   @PrimaryColumn()
   id: string;
