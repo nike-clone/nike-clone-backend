@@ -1,3 +1,5 @@
+import { cp } from 'fs';
+import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
 import {
   Column,
   Entity,
@@ -34,6 +36,13 @@ export class Goods {
 
   @Column({ default: 10 })
   stock: number;
+
+  @ManyToOne(
+    () => GoodsClassification,
+    (classification) => classification.goods,
+  )
+  @JoinColumn()
+  classification: GoodsClassification;
 
   @ManyToOne(() => Gender, (gender) => gender.goods)
   @JoinColumn()
