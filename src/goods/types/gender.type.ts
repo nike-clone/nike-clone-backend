@@ -1,5 +1,5 @@
 export enum GenderType {
   Male = 'Male',
-  Femaile = 'Femaile',
+  Female = 'Female',
   Unisex = 'Unisex',
 }
