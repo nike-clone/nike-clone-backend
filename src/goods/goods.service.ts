@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
 import { Repository } from 'typeorm';
 import { CreateGoodsDto } from './dto/create-goods.dto';
+import { GoodsFiltersDto } from './dto/goods-filters.dto';
 import { UpdateGoodsDto } from './dto/update-goods.dto';
 import { Color } from './entities/colors.entity';
 import { Gender } from './entities/genders.entity';
@@ -59,8 +60,56 @@ export class GoodsService {
     return this.goodsRepository.save(goods);
   }
 
-  async findAllGoods() {
+  async findAllGoods(goodsFilters: GoodsFiltersDto) {
+    const queryOptions = {
+      color: null,
+      size: null,
+      gender: null,
+      classification: null,
+    };
+
+    if (goodsFilters.colorCode) {
+      const color = await this.colorRepository.findOne({
+        where: { colorCode: goodsFilters.colorCode },
+      });
+      if (!color) {
+        throw new NotAcceptableException('Unacceptable color code');
+      }
+      queryOptions.color = color;
+    }
+
+    if (goodsFilters.size) {
+      const size = await this.sizeRepository.findOne({
+        where: { id: goodsFilters.size },
+      });
+      if (!size) {
+        throw new NotAcceptableException('Unacceptable size');
+      }
+      queryOptions.size = size;
+    }
+
+    if (goodsFilters.gender) {
+      const gender = await this.genderRepository.findOne({
+        where: { gender: goodsFilters.gender },
+      });
+      if (!gender) {
+        throw new NotAcceptableException('Unacceptable gender');
+      }
+      queryOptions.gender = gender;
+    }
+
+    if (goodsFilters.classification) {
+      const classification = await this.goodsClassificationsRepository.findOne({
+        where: { alias: goodsFilters.classification },
+      });
+      if (!classification) {
+        throw new NotAcceptableException('Unacceptable classification (alias)');
+      }
+      queryOptions.classification = classification;
+    }
+
     const result = await this.goodsRepository.find({
+      where: { ...queryOptions },
       relations: ['color', 'gender', 'size', 'classification'],
     });
 

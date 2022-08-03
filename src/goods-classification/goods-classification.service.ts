@@ -14,6 +14,7 @@ export class GoodsClassificationService {
   async create(createGoodsClassificationDto: CreateGoodsClassificationDto) {
     const classification = this.classificationsRepository.create({
       type: createGoodsClassificationDto.type,
+      alias: createGoodsClassificationDto.alias,
     });
 
     await this.classificationsRepository.save(classification);

@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { GoodsService } from './goods.service';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { UpdateGoodsDto } from './dto/update-goods.dto';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { GoodsFiltersDto } from './dto/goods-filters.dto';
 
 @Controller('goods')
 export class GoodsController {
@@ -24,8 +26,9 @@ export class GoodsController {
   }
 
   @Get()
-  findAll() {
-    return this.goodsService.findAllGoods();
+  findAll(@Query() goodsFilters: GoodsFiltersDto) {
+    console.log(goodsFilters);
+    return this.goodsService.findAllGoods(goodsFilters);
   }
 
   @Get('/sizes')

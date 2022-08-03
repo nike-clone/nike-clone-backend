@@ -15,6 +15,9 @@ export class GoodsClassification {
   @Column()
   type: string;
 
+  @Column()
+  alias: string;
+
   @OneToMany(() => Goods, (goods) => goods.classification)
   goods: Goods[];
 }
