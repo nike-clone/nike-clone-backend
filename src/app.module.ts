@@ -16,6 +16,7 @@ import { join, resolve } from 'path';
 import { ServeStaticOptions } from '@nestjs/platform-express/interfaces/serve-static-options.interface';
 import { BannersModule } from './banners/banners.module';
 import { GoodsModule } from './goods/goods.module';
+import { GoodsClassificationModule } from './goods-classification/goods-classification.module';
 
 console.log(OrmConfig);
 @Module({
@@ -53,6 +54,7 @@ console.log(OrmConfig);
         } as ServeStaticModuleOptions;
       })(),
     ),
+    GoodsClassificationModule,
   ],
 })
 export class AppModule {}
