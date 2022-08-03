@@ -4,11 +4,13 @@ import {
   registerDecorator,
   ValidationArguments,
   ValidationOptions,
+  ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
 import { Repository } from 'typeorm';
 
+@ValidatorConstraint({ name: 'IsGoodsClassification', async: true })
 @Injectable()
 export class IsGoodsClassificationConstraint
   implements ValidatorConstraintInterface
@@ -18,7 +20,7 @@ export class IsGoodsClassificationConstraint
     private goodsClassificationRepository: Repository<GoodsClassification>,
   ) {}
 
-  async validate(classification: string, args: ValidationArguments) {
+  async validate(classification: any, args: ValidationArguments) {
     const selectedClassification =
       await this.goodsClassificationRepository.findOne({
         where: { type: classification },
@@ -32,7 +34,7 @@ export class IsGoodsClassificationConstraint
   }
 
   defaultMessage(validationArguments?: ValidationArguments): string {
-    return 'Unacceptabler goods classificaion value';
+    return 'Unacceptable goods classificaion value';
   }
 }
 
