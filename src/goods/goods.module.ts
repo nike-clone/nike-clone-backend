@@ -9,12 +9,18 @@ import { Size } from './entities/sizes.entity';
 import { IsColorConstraint } from './decorators/is-color.decorator';
 import { AuthService } from 'src/auth/auth.service';
 import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
+import { IsGoodsClassificationConstraint } from './decorators/is-goods-classification.decorstor';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Goods, Gender, Color, Size, GoodsClassification]),
   ],
   controllers: [GoodsController],
-  providers: [GoodsService, AuthService, IsColorConstraint],
+  providers: [
+    GoodsService,
+    AuthService,
+    IsColorConstraint,
+    IsGoodsClassificationConstraint,
+  ],
 })
 export class GoodsModule {}

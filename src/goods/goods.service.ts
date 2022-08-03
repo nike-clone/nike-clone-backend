@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
 import { Repository } from 'typeorm';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { UpdateGoodsDto } from './dto/update-goods.dto';
@@ -15,11 +16,21 @@ export class GoodsService {
     @InjectRepository(Size) private sizeRepository: Repository<Size>,
     @InjectRepository(Color) private colorRepository: Repository<Color>,
     @InjectRepository(Gender) private genderRepository: Repository<Gender>,
+    @InjectRepository(GoodsClassification)
+    private goodsClassificationsRepository: Repository<GoodsClassification>,
   ) {}
 
   async create(createGoodDto: CreateGoodsDto) {
-    const { name, price, imagePath, gender, color, size, stock } =
-      createGoodDto;
+    const {
+      name,
+      price,
+      imagePath,
+      gender,
+      color,
+      size,
+      stock,
+      classification,
+    } = createGoodDto;
 
     const selectedColor = await this.colorRepository.findOne({
       where: { name: color },
@@ -30,6 +41,10 @@ export class GoodsService {
     const selectedSize = await this.sizeRepository.findOne({
       where: { id: size },
     });
+    const selectedClassification =
+      await this.goodsClassificationsRepository.findOne({
+        where: { type: classification },
+      });
 
     const goods = new Goods();
     goods.name = name;
@@ -39,13 +54,14 @@ export class GoodsService {
     goods.gender = selectedGender;
     goods.size = selectedSize;
     goods.stock = stock;
+    goods.classification = selectedClassification;
 
     return this.goodsRepository.save(goods);
   }
 
   async findAllGoods() {
     const result = await this.goodsRepository.find({
-      relations: ['color', 'gender', 'size'],
+      relations: ['color', 'gender', 'size', 'classification'],
     });
 
     return result;
@@ -71,7 +87,7 @@ export class GoodsService {
   findOne(id: number) {
     return this.goodsRepository.findOne({
       where: { id },
-      relations: ['color', 'gender', 'size'],
+      relations: ['color', 'gender', 'size', 'classification'],
     });
   }
 
