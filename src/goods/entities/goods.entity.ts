@@ -23,6 +23,12 @@ export class Goods {
   @Column()
   price: number;
 
+  @Column({ default: null })
+  salePrice: number;
+
+  @Column({ default: null })
+  salePercentage: number;
+
   @Column()
   imagePath: string;
 
