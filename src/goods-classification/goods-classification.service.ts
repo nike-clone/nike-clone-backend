@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateGoodsClassificationDto } from './dto/create-goods-classification.dto';
-import { UpdateGoodsClassificationDto } from './dto/update-goods-classification.dto';
+import { GoodsClassification } from './entities/goods-classification.entity';
 
 @Injectable()
 export class GoodsClassificationService {
-  create(createGoodsClassificationDto: CreateGoodsClassificationDto) {
-    return 'This action adds a new goodsClassification';
+  constructor(
+    @InjectRepository(GoodsClassification)
+    private classificationsRepository: Repository<GoodsClassification>,
+  ) {}
+
+  async create(createGoodsClassificationDto: CreateGoodsClassificationDto) {
+    const classification = this.classificationsRepository.create({
+      type: createGoodsClassificationDto.type,
+    });
+
+    await this.classificationsRepository.save(classification);
+
+    return this.classificationsRepository.find();
   }
 
   findAll() {
-    return `This action returns all goodsClassification`;
+    return this.classificationsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} goodsClassification`;
-  }
+  async remove(id: number) {
+    await this.classificationsRepository.delete(id);
 
-  update(id: number, updateGoodsClassificationDto: UpdateGoodsClassificationDto) {
-    return `This action updates a #${id} goodsClassification`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} goodsClassification`;
+    return this.classificationsRepository.find();
   }
 }

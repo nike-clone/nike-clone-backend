@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { GoodsClassificationService } from './goods-classification.service';
 import { CreateGoodsClassificationDto } from './dto/create-goods-classification.dto';
-import { UpdateGoodsClassificationDto } from './dto/update-goods-classification.dto';
 
 @Controller('goods-classification')
 export class GoodsClassificationController {
