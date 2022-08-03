@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BannerType } from '../types/banner.type';
 
-@Entity('Banner')
+@Entity()
 export class Banner {
   @PrimaryGeneratedColumn()
   id: number;
