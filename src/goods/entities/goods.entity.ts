@@ -1,4 +1,5 @@
 import { CartItems } from 'src/cart-items/entities/cart-item.entity';
+import { GoodsClassification } from '../../goods-classification/entities/goods-classification.entity';
 import {
   Column,
   Entity,
@@ -25,11 +26,24 @@ export class Goods {
   @Column()
   price: number;
 
+  @Column({ default: null })
+  salePrice: number;
+
+  @Column({ default: null })
+  salePercentage: number;
+
   @Column()
   imagePath: string;
 
   @Column({ default: 10 })
   stock: number;
+
+  @ManyToOne(
+    () => GoodsClassification,
+    (classification) => classification.goods,
+  )
+  @JoinColumn()
+  classification: GoodsClassification;
 
   @ManyToOne(() => Gender, (gender) => gender.goods)
   @JoinColumn()
