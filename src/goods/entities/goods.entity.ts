@@ -1,5 +1,5 @@
 import { cp } from 'fs';
-import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
+import { GoodsClassification } from '../../goods-classification/entities/goods-classification.entity';
 import {
   Column,
   Entity,
