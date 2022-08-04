@@ -27,7 +27,6 @@ export class GoodsController {
 
   @Get()
   findAll(@Query() goodsFilters: GoodsFiltersDto) {
-    console.log(goodsFilters);
     return this.goodsService.findAllGoods(goodsFilters);
   }
 

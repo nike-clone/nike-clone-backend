@@ -61,6 +61,9 @@ export class GoodsService {
   }
 
   async findAllGoods(goodsFilters: GoodsFiltersDto) {
+    const offset = goodsFilters.offset || 0;
+    const count = goodsFilters.count || 20;
+
     const queryOptions = {
       color: null,
       size: null,
@@ -111,6 +114,9 @@ export class GoodsService {
     const result = await this.goodsRepository.find({
       where: { ...queryOptions },
       relations: ['color', 'gender', 'size', 'classification'],
+      take: count,
+      skip: offset,
+      order: { createdAt: 'DESC' },
     });
 
     return result;

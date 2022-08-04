@@ -24,4 +24,14 @@ export class GoodsFiltersDto {
   @IsOptional()
   @IsString()
   classification: string;
+
+  @Transform(({ value }) => parseInt(value))
+  @IsOptional()
+  @IsNumber()
+  offset: number;
+
+  @Transform(({ value }) => parseInt(value))
+  @IsOptional()
+  @IsNumber()
+  count: number;
 }
