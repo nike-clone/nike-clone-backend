@@ -2,6 +2,7 @@ import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 import { GoodsClassification } from '../../goods-classification/entities/goods-classification.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToMany,
@@ -37,6 +38,9 @@ export class Goods {
 
   @Column({ default: 10 })
   stock: number;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
   @ManyToOne(
     () => GoodsClassification,
