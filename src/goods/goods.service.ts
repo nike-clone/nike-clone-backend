@@ -72,9 +72,14 @@ export class GoodsService {
     };
 
     if (goodsFilters.colorCode) {
-      const color = await this.colorRepository.findOne({
-        where: { colorCode: goodsFilters.colorCode },
+      const colorCodes = goodsFilters.colorCode.map((code) => {
+        return { colorCode: code };
       });
+
+      const color = await this.colorRepository.find({
+        where: colorCodes,
+      });
+
       if (!color) {
         throw new NotAcceptableException('Unacceptable color code');
       }
