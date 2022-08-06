@@ -97,8 +97,12 @@ export class GoodsService {
     }
 
     if (goodsFilters.gender) {
-      const gender = await this.genderRepository.findOne({
-        where: { gender: goodsFilters.gender },
+      const genders = goodsFilters.gender.map((gender) => {
+        return { gender };
+      });
+
+      const gender = await this.genderRepository.find({
+        where: genders,
       });
       if (!gender) {
         throw new NotAcceptableException('Unacceptable gender');

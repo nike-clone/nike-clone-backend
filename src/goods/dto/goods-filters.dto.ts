@@ -1,16 +1,20 @@
 import { Transform } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
-import { isNumberObject } from 'util/types';
-import { IsColor } from '../decorators/is-color.decorator';
-import { IsGoodsClassification } from '../decorators/is-goods-classification.decorstor';
-import { GenderType } from '../types/gender.type';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+
+import { IsGendersList } from '../decorators/is-genders-list.decorator';
+
+export type Gender = 'Male' | 'Femail' | 'Unisex';
 
 export class GoodsFiltersDto {
-  @IsOptional()
-  @IsEnum(GenderType, {
-    message: `Gender must be 'Male', 'Female' or 'Unisex'`,
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return [value];
+    }
+    return value;
   })
-  gender: string;
+  @IsOptional()
+  @IsGendersList()
+  gender: Gender[];
 
   @Transform(({ value }) => `#${value}`)
   @IsOptional()
