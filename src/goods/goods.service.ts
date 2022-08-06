@@ -82,9 +82,14 @@ export class GoodsService {
     }
 
     if (goodsFilters.size) {
-      const size = await this.sizeRepository.findOne({
-        where: { id: goodsFilters.size },
+      const sizeIds = goodsFilters.size.map((size) => {
+        return { id: size };
       });
+
+      const size = await this.sizeRepository.find({
+        where: sizeIds,
+      });
+
       if (!size) {
         throw new NotAcceptableException('Unacceptable size');
       }

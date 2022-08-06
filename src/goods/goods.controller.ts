@@ -19,6 +19,11 @@ import { GoodsFiltersDto } from './dto/goods-filters.dto';
 export class GoodsController {
   constructor(private readonly goodsService: GoodsService) {}
 
+  @Get('/test')
+  test(@Query() query: any) {
+    return query;
+  }
+
   @UseGuards(AdminGuard)
   @Post()
   create(@Body() createGoodDto: CreateGoodsDto) {
