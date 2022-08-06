@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { isNumberObject } from 'util/types';
 import { IsColor } from '../decorators/is-color.decorator';
 import { IsGoodsClassification } from '../decorators/is-goods-classification.decorstor';
 import { GenderType } from '../types/gender.type';
@@ -16,10 +17,15 @@ export class GoodsFiltersDto {
   @IsString()
   colorCode: string;
 
-  @Transform(({ value }) => parseInt(value))
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return [parseInt(value)];
+    }
+    return value.map((v) => parseInt(v));
+  })
   @IsOptional()
-  @IsNumber()
-  size: number;
+  @IsNumber({}, { each: true })
+  size: number[];
 
   @IsOptional()
   @IsString()
