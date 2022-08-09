@@ -1,10 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NotFoundError } from 'rxjs';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 import { Cart } from './entities/cart.entity';
 
 @Injectable()
@@ -14,16 +11,18 @@ export class CartsService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async create(createCartDto: CreateCartDto) {
-    const { userId } = createCartDto;
-    const user = await this.usersRepository.findOne({ where: { id: userId } });
+  async create(user: any) {
+    const { userId } = user;
+    const cartUser = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
 
-    if (!user) {
+    if (!cartUser) {
       throw new NotFoundException('User not found.');
     }
 
     const cart = new Cart();
-    cart.user = user;
+    cart.user = cartUser;
     return this.cartsRepository.save(cart);
   }
 
@@ -44,17 +43,27 @@ export class CartsService {
     return cart;
   }
 
-  findAll() {
-    return `This action returns all carts`;
+  async clearCart(user: any) {
+    const oldCart = await this.findCartByUserId(user.userId);
+    await this.cartsRepository.remove(oldCart);
+
+    const cartUser = await this.usersRepository.findOne({
+      where: { id: user.usrId },
+    });
+    const newCart = await this.cartsRepository.create({ user: cartUser });
+    return this.cartsRepository.save(newCart);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
-  }
+  // async updateCartByUserToken(updateCartDto: UpdateCartDto, user: any) {
+  //   console.log(user.userId);
+  //   const cart = await this.findCartByUserId(user.userId);
 
-  update(id: number, updateCartDto: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
-  }
+  //   Object.assign(cart, updateCartDto);
+
+  //   const updatedCart = await this.cartsRepository.save(cart);
+
+  //   return updatedCart;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} cart`;

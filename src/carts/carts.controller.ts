@@ -3,23 +3,23 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  Query,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { QueryRequired } from 'src/decorators/query-required.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { CartsService } from './carts.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Controller('carts')
 export class CartsController {
   constructor(private readonly cartsService: CartsService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartsService.create(createCartDto);
+  create(@CurrentUser() user: any) {
+    return this.cartsService.create(user);
   }
 
   @Get('/user')
@@ -27,20 +27,25 @@ export class CartsController {
     return this.cartsService.findCartByUserId(userId);
   }
 
-  @Get()
-  findAll() {
-    return this.cartsService.findAll();
+  @UseGuards(AuthGuard)
+  @Post('/clear')
+  clearCart(@CurrentUser() user: any) {
+    return this.cartsService.clearCart(user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartsService.findOne(+id);
-  }
+  // @UseGuards(AuthGuard)
+  // @Patch()
+  // updateCartByUserToken(
+  //   @Body() updateCartDto: UpdateCartDto,
+  //   @CurrentUser() user: any,
+  // ) {
+  //   return this.cartsService.updateCartByUserToken(updateCartDto, user);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartsService.update(+id, updateCartDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
+  //   return this.cartsService.update(+id, updateCartDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

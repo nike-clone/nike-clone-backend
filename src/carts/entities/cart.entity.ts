@@ -15,13 +15,13 @@ export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: 0 })
-  totalPrice: number;
+  // @Column({ default: 0 })
+  // totalPrice: number;
 
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
 
-  @OneToMany(() => CartItems, (cartItem) => cartItem.cart)
+  @OneToMany(() => CartItems, (cartItem) => cartItem.cart, { cascade: true })
   cartItems: CartItems[];
 }
