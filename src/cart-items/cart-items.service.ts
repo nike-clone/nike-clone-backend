@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartsService } from 'src/carts/carts.service';
 import { GoodsService } from 'src/goods/goods.service';
+import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
@@ -16,10 +17,10 @@ export class CartItemsService {
     private goodsService: GoodsService,
   ) {}
 
-  async createCartItem(createCartItemDto: CreateCartItemDto) {
-    const { quantity, goodsId, userId } = createCartItemDto;
+  async createCartItem(createCartItemDto: CreateCartItemDto, user: User) {
+    const { quantity, goodsId } = createCartItemDto;
 
-    const cart = await this.cartsService.findCartByUserId(userId);
+    const cart = await this.cartsService.findCartByUserId(user.id);
     if (!cart) {
       throw new NotFoundException('Wrong user id.');
     }

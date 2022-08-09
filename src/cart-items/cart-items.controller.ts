@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
 import { CartItemsService } from './cart-items.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
@@ -16,8 +18,11 @@ export class CartItemsController {
   constructor(private readonly cartItemsService: CartItemsService) {}
 
   @Post()
-  create(@Body() createCartItemDto: CreateCartItemDto) {
-    return this.cartItemsService.createCartItem(createCartItemDto);
+  create(
+    @Body() createCartItemDto: CreateCartItemDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.cartItemsService.createCartItem(createCartItemDto, user);
   }
 
   @Get()

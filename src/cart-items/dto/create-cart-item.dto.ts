@@ -6,7 +6,4 @@ export class CreateCartItemDto {
 
   @IsNumber()
   goodsId: number;
-
-  @IsString()
-  userId: string;
 }
