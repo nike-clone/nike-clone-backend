@@ -38,12 +38,14 @@ export class CartItemsController {
     return this.cartItemsService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateCartItemDto: UpdateCartItemDto,
+    @CurrentUser() user: any,
   ) {
-    return this.cartItemsService.updateCartItem(+id, updateCartItemDto);
+    return this.cartItemsService.updateCartItem(+id, updateCartItemDto, user);
   }
 
   @Delete(':id')

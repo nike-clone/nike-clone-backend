@@ -46,10 +46,9 @@ export class UsersController {
   async getUserInfo(
     @Headers() headers: any,
     @Param('id') userId: string,
-    @CurrentUser() user: User,
+    // @CurrentUser() user: User,
   ): Promise<UserInfo> {
-    return user;
-    // return this.usersService.getUserInfo(userId);
+    return this.usersService.getUserInfo(userId);
   }
 
   // TODO : User update 구현

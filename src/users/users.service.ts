@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
@@ -30,6 +32,7 @@ export class UsersService {
     private emailService: EmailService,
     private connection: Connection,
     private authService: AuthService,
+    @Inject(forwardRef(() => CartsService))
     private cartsService: CartsService,
   ) {}
 
@@ -168,6 +171,15 @@ export class UsersService {
       name: user.name,
       email: user.email,
     };
+  }
+
+  async findUserById(id: string) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('user not found.');
+    }
+
+    return user;
   }
 
   // TODO : User update 구현

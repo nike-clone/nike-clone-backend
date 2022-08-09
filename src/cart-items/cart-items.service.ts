@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartsService } from 'src/carts/carts.service';
 import { GoodsService } from 'src/goods/goods.service';
@@ -20,7 +24,9 @@ export class CartItemsService {
   async createCartItem(createCartItemDto: CreateCartItemDto, user: any) {
     const { quantity, goodsId } = createCartItemDto;
 
-    const cart = await this.cartsService.findCartByUserId(user.id);
+    console.log(user);
+
+    const cart = await this.cartsService.findCartByUserId(user.userId);
     if (!cart) {
       throw new NotFoundException('Wrong user id.');
     }
@@ -52,10 +58,26 @@ export class CartItemsService {
     return `This action returns a #${id} cartItem`;
   }
 
-  async updateCartItem(id: number, updateCartItemDto: UpdateCartItemDto) {
-    const cartItem = await this.cartItemsRepository.findOne({ where: { id } });
+  async updateCartItem(
+    id: number,
+    updateCartItemDto: UpdateCartItemDto,
+    user: any,
+  ) {
+    console.log(user);
+    const cartItem = await this.cartItemsRepository.findOne({
+      where: { id },
+      relations: ['cart.user'],
+    });
     if (!cartItem) {
       throw new NotFoundException('Cart item not foud.');
+    }
+
+    const requestedUserId = user.userId;
+    const cartUserId = cartItem.cart.user.id;
+
+    console.log(requestedUserId, cartUserId);
+    if (requestedUserId !== cartUserId) {
+      throw new UnauthorizedException();
     }
 
     Object.assign(cartItem, updateCartItemDto);
