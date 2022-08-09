@@ -6,8 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { CartItemsService } from './cart-items.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
@@ -17,6 +19,7 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 export class CartItemsController {
   constructor(private readonly cartItemsService: CartItemsService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   create(
     @Body() createCartItemDto: CreateCartItemDto,
@@ -40,7 +43,7 @@ export class CartItemsController {
     @Param('id') id: string,
     @Body() updateCartItemDto: UpdateCartItemDto,
   ) {
-    return this.cartItemsService.update(+id, updateCartItemDto);
+    return this.cartItemsService.updateCartItem(+id, updateCartItemDto);
   }
 
   @Delete(':id')

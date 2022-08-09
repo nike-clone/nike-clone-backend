@@ -17,7 +17,7 @@ export class CartItemsService {
     private goodsService: GoodsService,
   ) {}
 
-  async createCartItem(createCartItemDto: CreateCartItemDto, user: User) {
+  async createCartItem(createCartItemDto: CreateCartItemDto, user: any) {
     const { quantity, goodsId } = createCartItemDto;
 
     const cart = await this.cartsService.findCartByUserId(user.id);
@@ -36,7 +36,12 @@ export class CartItemsService {
       cart,
     });
 
-    return this.cartItemsRepository.save(cartItem);
+    await this.cartItemsRepository.save(cartItem);
+
+    return this.cartItemsRepository.findOne({
+      where: { id: cartItem.id },
+      relations: ['goods', 'cart'],
+    });
   }
 
   findAll() {
@@ -47,8 +52,20 @@ export class CartItemsService {
     return `This action returns a #${id} cartItem`;
   }
 
-  update(id: number, updateCartItemDto: UpdateCartItemDto) {
-    return `This action updates a #${id} cartItem`;
+  async updateCartItem(id: number, updateCartItemDto: UpdateCartItemDto) {
+    const cartItem = await this.cartItemsRepository.findOne({ where: { id } });
+    if (!cartItem) {
+      throw new NotFoundException('Cart item not foud.');
+    }
+
+    Object.assign(cartItem, updateCartItemDto);
+
+    const updatedCartItem = await this.cartItemsRepository.save(cartItem);
+
+    return {
+      message: `The cart item(id: ${id}) was successfully updated.`,
+      data: updatedCartItem,
+    };
   }
 
   remove(id: number) {
