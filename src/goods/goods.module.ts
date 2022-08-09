@@ -11,6 +11,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
 import { IsGoodsClassificationConstraint } from './decorators/is-goods-classification.decorstor';
+import { IsColorCodeListConstraint } from './decorators/is-colorCode-list.decorator';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { IsGoodsClassificationConstraint } from './decorators/is-goods-classific
     AuthService,
     IsColorConstraint,
     IsGoodsClassificationConstraint,
+    IsColorCodeListConstraint,
   ],
 })
 export class GoodsModule {}

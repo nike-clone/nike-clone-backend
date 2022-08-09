@@ -72,9 +72,14 @@ export class GoodsService {
     };
 
     if (goodsFilters.colorCode) {
-      const color = await this.colorRepository.findOne({
-        where: { colorCode: goodsFilters.colorCode },
+      const colorCodes = goodsFilters.colorCode.map((code) => {
+        return { colorCode: code };
       });
+
+      const color = await this.colorRepository.find({
+        where: colorCodes,
+      });
+
       if (!color) {
         throw new NotAcceptableException('Unacceptable color code');
       }
@@ -82,9 +87,14 @@ export class GoodsService {
     }
 
     if (goodsFilters.size) {
-      const size = await this.sizeRepository.findOne({
-        where: { id: goodsFilters.size },
+      const sizeIds = goodsFilters.size.map((size) => {
+        return { id: size };
       });
+
+      const size = await this.sizeRepository.find({
+        where: sizeIds,
+      });
+
       if (!size) {
         throw new NotAcceptableException('Unacceptable size');
       }
@@ -92,8 +102,12 @@ export class GoodsService {
     }
 
     if (goodsFilters.gender) {
-      const gender = await this.genderRepository.findOne({
-        where: { gender: goodsFilters.gender },
+      const genders = goodsFilters.gender.map((gender) => {
+        return { gender };
+      });
+
+      const gender = await this.genderRepository.find({
+        where: genders,
       });
       if (!gender) {
         throw new NotAcceptableException('Unacceptable gender');
