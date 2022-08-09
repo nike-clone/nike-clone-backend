@@ -44,8 +44,6 @@ export class CartsService {
     const oldCart = await this.findCartByUserId(user.userId);
     await this.cartsRepository.remove(oldCart);
 
-    console.log(user);
-
     const cartUser = await this.usersService.findUserById(user.userId);
 
     const newCart = await this.cartsRepository.create({ user: cartUser });

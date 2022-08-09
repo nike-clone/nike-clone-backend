@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartsService } from 'src/carts/carts.service';
+import { Goods } from 'src/goods/entities/goods.entity';
 import { GoodsService } from 'src/goods/goods.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -24,28 +25,38 @@ export class CartItemsService {
   async createCartItem(createCartItemDto: CreateCartItemDto, user: any) {
     const { quantity, goodsId } = createCartItemDto;
 
-    console.log(user);
-
     const cart = await this.cartsService.findCartByUserId(user.userId);
     if (!cart) {
       throw new NotFoundException('Wrong user id.');
     }
 
-    const goods = await this.goodsService.findOne(goodsId);
-    if (!goods) {
-      throw new NotFoundException('Wrong goods id.');
+    const isGoodsInCart = await this.isGoodsInCart(goodsId);
+
+    if (isGoodsInCart) {
+      // cart item already exists
+      const cartItem = await this.cartItemsRepository.findOne({
+        where: { goods: { id: goodsId } },
+      });
+      cartItem.quantity += quantity;
+
+      await this.cartItemsRepository.save(cartItem);
+    } else {
+      const goods = await this.goodsService.findOne(goodsId);
+      if (!goods) {
+        throw new NotFoundException('Wrong goods id.');
+      }
+
+      const cartItem = await this.cartItemsRepository.create({
+        quantity,
+        goods,
+        cart,
+      });
+
+      await this.cartItemsRepository.save(cartItem);
     }
 
-    const cartItem = await this.cartItemsRepository.create({
-      quantity,
-      goods,
-      cart,
-    });
-
-    await this.cartItemsRepository.save(cartItem);
-
     return this.cartItemsRepository.findOne({
-      where: { id: cartItem.id },
+      where: { goods: { id: goodsId } },
       relations: ['goods', 'cart'],
     });
   }
@@ -63,7 +74,6 @@ export class CartItemsService {
     updateCartItemDto: UpdateCartItemDto,
     user: any,
   ) {
-    console.log(user);
     const cartItem = await this.cartItemsRepository.findOne({
       where: { id },
       relations: ['cart.user'],
@@ -92,5 +102,13 @@ export class CartItemsService {
 
   remove(id: number) {
     return `This action removes a #${id} cartItem`;
+  }
+
+  async isGoodsInCart(goodsId: number) {
+    const cartItemList = await this.cartItemsRepository.find({
+      where: { goods: { id: goodsId } },
+    });
+    console.log(cartItemList);
+    return cartItemList.length > 0;
   }
 }
