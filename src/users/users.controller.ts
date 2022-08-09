@@ -13,6 +13,8 @@ import { UserLoginDto } from './dto/user-login.dto';
 import { UserInfo } from './UserInfo';
 import { AuthService } from 'src/auth/auth.service';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -44,8 +46,10 @@ export class UsersController {
   async getUserInfo(
     @Headers() headers: any,
     @Param('id') userId: string,
+    @CurrentUser() user: User,
   ): Promise<UserInfo> {
-    return this.usersService.getUserInfo(userId);
+    return user;
+    // return this.usersService.getUserInfo(userId);
   }
 
   // TODO : User update 구현

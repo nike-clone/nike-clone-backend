@@ -25,5 +25,6 @@ import { IsColorCodeListConstraint } from './decorators/is-colorCode-list.decora
     IsGoodsClassificationConstraint,
     IsColorCodeListConstraint,
   ],
+  exports: [GoodsService],
 })
 export class GoodsModule {}

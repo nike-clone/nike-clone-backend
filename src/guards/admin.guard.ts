@@ -21,7 +21,6 @@ export class AdminGuard implements CanActivate {
   }
 
   private validateAdmin(request: Request) {
-
     const token = request.headers.authorization;
     if (!token) {
       throw new BadRequestException('token error.');
@@ -33,7 +32,6 @@ export class AdminGuard implements CanActivate {
     const jwt = jwtString[1];
 
     const userInfo = this.authService.verify(jwt);
-
 
     return userInfo.isAdmin;
   }
