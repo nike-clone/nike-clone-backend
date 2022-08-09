@@ -22,9 +22,10 @@ export class CartsController {
     return this.cartsService.create(user);
   }
 
-  @Get('/user')
-  findCartByUserId(@QueryRequired('userId') userId: string) {
-    return this.cartsService.findCartByUserId(userId);
+  @UseGuards(AuthGuard)
+  @Get()
+  findCartByUserId(@CurrentUser() user: any) {
+    return this.cartsService.findCartByUserId(user.userId);
   }
 
   @UseGuards(AuthGuard)

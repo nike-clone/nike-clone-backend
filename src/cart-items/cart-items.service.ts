@@ -41,6 +41,7 @@ export class CartItemsService {
 
       await this.cartItemsRepository.save(cartItem);
     } else {
+      // adding new goods to the cart
       const goods = await this.goodsService.findOne(goodsId);
       if (!goods) {
         throw new NotFoundException('Wrong goods id.');
@@ -55,14 +56,18 @@ export class CartItemsService {
       await this.cartItemsRepository.save(cartItem);
     }
 
-    return this.cartItemsRepository.findOne({
-      where: { goods: { id: goodsId } },
-      relations: ['goods', 'cart'],
-    });
+    return {
+      message: 'The goods was added to the cart.',
+    };
   }
 
-  findAll() {
-    return `This action returns all cartItems`;
+  async findAllCartItems(cartId: number) {
+    const cartItems = await this.cartItemsRepository.find({
+      where: { cart: { id: cartId } },
+      relations: ['goods'],
+    });
+
+    return cartItems;
   }
 
   findOne(id: number) {
@@ -110,5 +115,15 @@ export class CartItemsService {
     });
     console.log(cartItemList);
     return cartItemList.length > 0;
+  }
+
+  async calculateTotalPrice(cartId: number): Promise<number> {
+    const items: CartItems[] = await this.findAllCartItems(cartId);
+
+    let total = 0;
+    items.forEach((item) => {
+      total += item.goods.price * item.quantity;
+    });
+    return total;
   }
 }

@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
@@ -31,11 +32,16 @@ export class CartsService {
 
     const cart = await this.cartsRepository.findOne({
       where: { user },
+      relations: ['cartItems.goods'],
     });
 
     if (!cart) {
       throw new NotFoundException('Cart not found.');
     }
+
+    const totalPrice = await this.calculateTotalPrice(cart.cartItems);
+
+    Object.assign(cart, { totalPrice });
 
     return cart;
   }
@@ -63,5 +69,13 @@ export class CartsService {
 
   remove(id: number) {
     return `This action removes a #${id} cart`;
+  }
+
+  async calculateTotalPrice(items: CartItems[]): Promise<number> {
+    let total = 0;
+    items.forEach((item) => {
+      total += item.goods.price * item.quantity;
+    });
+    return total;
   }
 }
