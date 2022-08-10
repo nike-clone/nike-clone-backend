@@ -28,21 +28,15 @@ export class GoodsService {
       productImagePrimary,
       productImageExtra,
       gender,
-      // color,
-      // size,
-      // stock,
       classification,
+      salePrice,
+      salePercentage,
     } = createGoodDto;
 
-    // const selectedColor = await this.colorRepository.findOne({
-    //   where: { name: color },
-    // });
     const selectedGender = await this.genderRepository.findOne({
       where: { gender },
     });
-    // const selectedSize = await this.sizeRepository.findOne({
-    //   where: { id: size },
-    // });
+
     const selectedClassification =
       await this.goodsClassificationsRepository.findOne({
         where: { type: classification },
@@ -53,11 +47,13 @@ export class GoodsService {
     goods.price = price;
     goods.productImagePrimary = productImagePrimary;
     goods.productImageExtra = productImageExtra;
-    // goods.color = selectedColor;
     goods.gender = selectedGender;
-    // goods.size = selectedSize;
-    // goods.stock = stock;
     goods.classification = selectedClassification;
+
+    if (salePrice && salePercentage) {
+      goods.salePrice = salePrice;
+      goods.salePercentage = salePercentage;
+    }
 
     return this.goodsRepository.save(goods);
   }
@@ -67,41 +63,41 @@ export class GoodsService {
     const count = goodsFilters.count || 20;
 
     const queryOptions = {
-      color: null,
-      size: null,
+      // color: null,
+      // size: null,
       gender: null,
       classification: null,
     };
 
-    if (goodsFilters.colorCode) {
-      const colorCodes = goodsFilters.colorCode.map((code) => {
-        return { colorCode: code };
-      });
+    // if (goodsFilters.colorCode) {
+    //   const colorCodes = goodsFilters.colorCode.map((code) => {
+    //     return { colorCode: code };
+    //   });
 
-      const color = await this.colorRepository.find({
-        where: colorCodes,
-      });
+    //   const color = await this.colorRepository.find({
+    //     where: colorCodes,
+    //   });
 
-      if (!color) {
-        throw new NotAcceptableException('Unacceptable color code');
-      }
-      queryOptions.color = color;
-    }
+    //   if (!color) {
+    //     throw new NotAcceptableException('Unacceptable color code');
+    //   }
+    //   queryOptions.color = color;
+    // }
 
-    if (goodsFilters.size) {
-      const sizeIds = goodsFilters.size.map((size) => {
-        return { id: size };
-      });
+    // if (goodsFilters.size) {
+    //   const sizeIds = goodsFilters.size.map((size) => {
+    //     return { id: size };
+    //   });
 
-      const size = await this.sizeRepository.find({
-        where: sizeIds,
-      });
+    //   const size = await this.sizeRepository.find({
+    //     where: sizeIds,
+    //   });
 
-      if (!size) {
-        throw new NotAcceptableException('Unacceptable size');
-      }
-      queryOptions.size = size;
-    }
+    //   if (!size) {
+    //     throw new NotAcceptableException('Unacceptable size');
+    //   }
+    //   queryOptions.size = size;
+    // }
 
     if (goodsFilters.gender) {
       const genders = goodsFilters.gender.map((gender) => {
@@ -129,13 +125,21 @@ export class GoodsService {
 
     const result = await this.goodsRepository.find({
       where: { ...queryOptions },
-      relations: ['color', 'gender', 'size', 'classification'],
+      // relations: ['color', 'gender', 'size', 'classification'],
+      relations: ['gender', 'classification'],
       take: count,
       skip: offset,
       order: { createdAt: 'DESC' },
     });
 
-    return result;
+    return {
+      data: result,
+      meta: {
+        requestedCount: count,
+        offset,
+        responseCount: result.length,
+      },
+    };
   }
 
   async findAllSizes() {
@@ -155,10 +159,14 @@ export class GoodsService {
     return await this.genderRepository.find();
   }
 
-  findOne(id: number) {
+  async findGoodsDetail() {
+    // find goods detail
+    //join with goods-items
+  }
+
+  async findOne(id: number) {
     return this.goodsRepository.findOne({
       where: { id },
-      relations: ['color', 'gender', 'size', 'classification'],
     });
   }
 
