@@ -6,11 +6,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Color } from './colors.entity';
 import { Gender } from './genders.entity';
-import { Size } from './sizes.entity';
+import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
 
 @Entity()
 export class Goods {
@@ -51,6 +51,9 @@ export class Goods {
   @ManyToOne(() => Gender, (gender) => gender.goods)
   @JoinColumn()
   gender: Gender;
+
+  @OneToMany(() => GoodsItem, (goodsItem) => goodsItem.goods)
+  goodsItems: GoodsItem[];
 
   // @ManyToOne(() => Color, (color) => color.goods)
   // @JoinColumn()

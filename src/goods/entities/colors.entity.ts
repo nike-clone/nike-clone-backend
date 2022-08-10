@@ -1,11 +1,5 @@
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Goods } from './goods.entity';
+import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Color {
@@ -17,6 +11,9 @@ export class Color {
 
   @Column()
   colorCode: string;
+
+  @OneToMany(() => GoodsItem, (goodsItem) => goodsItem.color)
+  goodsItems: GoodsItem[];
 
   // @OneToMany((type) => Goods, (goods) => goods.color)
   // goods: Goods[];
