@@ -70,10 +70,6 @@ export class CartItemsService {
     return cartItems;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cartItem`;
-  }
-
   async updateCartItem(
     id: number,
     updateCartItemDto: UpdateCartItemDto,

@@ -28,11 +28,6 @@ export class CartItemsController {
     return this.cartItemsService.createCartItem(createCartItemDto, user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartItemsService.findOne(+id);
-  }
-
   @UseGuards(AuthGuard)
   @Patch(':id')
   update(
