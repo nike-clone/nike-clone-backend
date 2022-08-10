@@ -67,37 +67,42 @@ export class GoodsService {
       // size: null,
       gender: null,
       classification: null,
+      goodsItems: {
+        color: null,
+        size: null,
+      },
     };
 
-    // if (goodsFilters.colorCode) {
-    //   const colorCodes = goodsFilters.colorCode.map((code) => {
-    //     return { colorCode: code };
-    //   });
+    if (goodsFilters.colorCode) {
+      const colorCodes = goodsFilters.colorCode.map((code) => {
+        return { colorCode: code };
+      });
 
-    //   const color = await this.colorRepository.find({
-    //     where: colorCodes,
-    //   });
+      const color = await this.colorRepository.find({
+        where: colorCodes,
+      });
 
-    //   if (!color) {
-    //     throw new NotAcceptableException('Unacceptable color code');
-    //   }
-    //   queryOptions.color = color;
-    // }
+      if (!color) {
+        throw new NotAcceptableException('Unacceptable color code');
+      }
 
-    // if (goodsFilters.size) {
-    //   const sizeIds = goodsFilters.size.map((size) => {
-    //     return { id: size };
-    //   });
+      queryOptions.goodsItems.color = color;
+    }
 
-    //   const size = await this.sizeRepository.find({
-    //     where: sizeIds,
-    //   });
+    if (goodsFilters.size) {
+      const sizeIds = goodsFilters.size.map((size) => {
+        return { id: size };
+      });
 
-    //   if (!size) {
-    //     throw new NotAcceptableException('Unacceptable size');
-    //   }
-    //   queryOptions.size = size;
-    // }
+      const size = await this.sizeRepository.find({
+        where: sizeIds,
+      });
+
+      if (!size) {
+        throw new NotAcceptableException('Unacceptable size');
+      }
+      queryOptions.goodsItems.size = size;
+    }
 
     if (goodsFilters.gender) {
       const genders = goodsFilters.gender.map((gender) => {
@@ -126,7 +131,12 @@ export class GoodsService {
     const result = await this.goodsRepository.find({
       where: { ...queryOptions },
       // relations: ['color', 'gender', 'size', 'classification'],
-      relations: ['gender', 'classification'],
+      relations: [
+        'gender',
+        'classification',
+        'goodsItems.color',
+        'goodsItems.size',
+      ],
       take: count,
       skip: offset,
       order: { createdAt: 'DESC' },
