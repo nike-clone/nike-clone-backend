@@ -39,6 +39,7 @@ export class UsersService {
   async signup(createUserDto: Partial<CreateUserDto>) {
     const { email, password, passwordCheck, name, phone, birthOfDate, gender } =
       createUserDto;
+
     await this.checkUserExists(email);
 
     await this.checkPasswordsIdentical(password, passwordCheck);
@@ -61,6 +62,7 @@ export class UsersService {
         await manager.save(user);
       });
     } catch (e) {
+      console.error(e);
       isTransectionReflected = false;
       console.log(e);
     }
