@@ -12,6 +12,6 @@ export class Gender {
   @Column()
   name: string;
 
-  @OneToMany((type) => Goods, (goods) => goods.gender)
+  @OneToMany(() => Goods, (goods) => goods.gender)
   goods: Goods[];
 }

@@ -4,7 +4,6 @@ import { GoodsClassification } from 'src/goods-classification/entities/goods-cla
 import { Repository } from 'typeorm';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { GoodsFiltersDto } from './dto/goods-filters.dto';
-import { UpdateGoodsDto } from './dto/update-goods.dto';
 import { Color } from './entities/colors.entity';
 import { Gender } from './entities/genders.entity';
 import { Goods } from './entities/goods.entity';
@@ -62,81 +61,12 @@ export class GoodsService {
     const offset = goodsFilters.offset || 0;
     const count = goodsFilters.count || 20;
 
-    const queryOptions = {
-      // color: null,
-      // size: null,
-      gender: null,
-      classification: null,
-      goodsItems: {
-        color: null,
-        size: null,
-      },
-    };
-
-    if (goodsFilters.colorCode) {
-      const colorCodes = goodsFilters.colorCode.map((code) => {
-        return { colorCode: code };
-      });
-
-      const color = await this.colorRepository.find({
-        where: colorCodes,
-      });
-
-      if (!color) {
-        throw new NotAcceptableException('Unacceptable color code');
-      }
-
-      queryOptions.goodsItems.color = color;
-    }
-
-    if (goodsFilters.size) {
-      const sizeIds = goodsFilters.size.map((size) => {
-        return { id: size };
-      });
-
-      const size = await this.sizeRepository.find({
-        where: sizeIds,
-      });
-
-      if (!size) {
-        throw new NotAcceptableException('Unacceptable size');
-      }
-      queryOptions.goodsItems.size = size;
-    }
-
-    if (goodsFilters.gender) {
-      const genders = goodsFilters.gender.map((gender) => {
-        return { gender };
-      });
-
-      const gender = await this.genderRepository.find({
-        where: genders,
-      });
-      if (!gender) {
-        throw new NotAcceptableException('Unacceptable gender');
-      }
-      queryOptions.gender = gender;
-    }
-
-    if (goodsFilters.classification) {
-      const classification = await this.goodsClassificationsRepository.findOne({
-        where: { alias: goodsFilters.classification },
-      });
-      if (!classification) {
-        throw new NotAcceptableException('Unacceptable classification (alias)');
-      }
-      queryOptions.classification = classification;
-    }
+    const { queryOptions, goodsRelationsList } =
+      await this.generateGoodsQueryOptionsAndRelationsList(goodsFilters);
 
     const result = await this.goodsRepository.find({
       where: { ...queryOptions },
-      // relations: ['color', 'gender', 'size', 'classification'],
-      relations: [
-        'gender',
-        'classification',
-        'goodsItems.color',
-        'goodsItems.size',
-      ],
+      relations: goodsRelationsList,
       take: count,
       skip: offset,
       order: { createdAt: 'DESC' },
@@ -169,9 +99,21 @@ export class GoodsService {
     return await this.genderRepository.find();
   }
 
-  async findGoodsDetail() {
-    // find goods detail
-    //join with goods-items
+  async findGoodsDetail(id: number, goodsFilters: GoodsFiltersDto) {
+    const { queryOptions, goodsRelationsList } =
+      await this.generateGoodsQueryOptionsAndRelationsList(goodsFilters);
+
+    const goods = await this.goodsRepository.findOne({
+      where: { id, ...queryOptions },
+      relations: [
+        'gender',
+        'classification',
+        'goodsItems.color',
+        'goodsItems.size',
+      ],
+    });
+
+    return goods;
   }
 
   async findOne(id: number) {
@@ -180,11 +122,81 @@ export class GoodsService {
     });
   }
 
-  update(id: number, updateGoodDto: UpdateGoodsDto) {
-    return `This action updates a #${id} good`;
-  }
+  private async generateGoodsQueryOptionsAndRelationsList(
+    goodsFilters: GoodsFiltersDto,
+  ) {
+    const queryOptions = {
+      gender: null,
+      classification: null,
+      goodsItems: null,
+    };
 
-  remove(id: number) {
-    return `This action removes a #${id} good`;
+    if (goodsFilters.size || goodsFilters.colorCode) {
+      queryOptions.goodsItems = {
+        color: null,
+        size: null,
+      };
+    }
+
+    const goodsRelationsList = ['gender', 'classification'];
+
+    if (goodsFilters.colorCode) {
+      const colorCodes = goodsFilters.colorCode.map((code) => {
+        return { colorCode: code };
+      });
+
+      const color = await this.colorRepository.find({
+        where: colorCodes,
+      });
+
+      if (!color) {
+        throw new NotAcceptableException('Unacceptable color code');
+      }
+
+      queryOptions.goodsItems.color = color;
+      goodsRelationsList.push('goodsItems.color');
+    }
+
+    if (goodsFilters.size) {
+      const sizeIds = goodsFilters.size.map((size) => {
+        return { id: size };
+      });
+
+      const size = await this.sizeRepository.find({
+        where: sizeIds,
+      });
+
+      if (!size) {
+        throw new NotAcceptableException('Unacceptable size');
+      }
+      queryOptions.goodsItems.size = size;
+      goodsRelationsList.push('goodsItems.size');
+    }
+
+    if (goodsFilters.gender) {
+      const genders = goodsFilters.gender.map((gender) => {
+        return { gender };
+      });
+
+      const gender = await this.genderRepository.find({
+        where: genders,
+      });
+      if (!gender) {
+        throw new NotAcceptableException('Unacceptable gender');
+      }
+      queryOptions.gender = gender;
+    }
+
+    if (goodsFilters.classification) {
+      const classification = await this.goodsClassificationsRepository.findOne({
+        where: { alias: goodsFilters.classification },
+      });
+      if (!classification) {
+        throw new NotAcceptableException('Unacceptable classification (alias)');
+      }
+      queryOptions.classification = classification;
+    }
+
+    return { queryOptions, goodsRelationsList };
   }
 }
