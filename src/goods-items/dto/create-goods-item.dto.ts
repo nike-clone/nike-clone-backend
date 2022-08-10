@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, Max, Min } from 'class-validator';
+import { IsNumber, Max, Min } from 'class-validator';
 import { IsColor } from 'src/goods/decorators/is-color.decorator';
 import { IsSize } from 'src/goods/decorators/is-size.decorator';
 
