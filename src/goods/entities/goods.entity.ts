@@ -35,9 +35,6 @@ export class Goods {
   @Column('simple-array')
   productImageExtra: string[];
 
-  // @Column({ default: 10 })
-  // stock: number;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

@@ -8,10 +8,10 @@ import {
   Delete,
   UseGuards,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { GoodsService } from './goods.service';
 import { CreateGoodsDto } from './dto/create-goods.dto';
-import { UpdateGoodsDto } from './dto/update-goods.dto';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { GoodsFiltersDto } from './dto/goods-filters.dto';
 
@@ -51,20 +51,11 @@ export class GoodsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.goodsService.findGoodsDetail();
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() goodsFilters: GoodsFiltersDto,
+  ) {
+    return this.goodsService.findGoodsDetail(id, goodsFilters);
     // return this.goodsService.findOne(+id);
-  }
-
-  @UseGuards(AdminGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGoodDto: UpdateGoodsDto) {
-    return this.goodsService.update(+id, updateGoodDto);
-  }
-
-  @UseGuards(AdminGuard)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.goodsService.remove(+id);
   }
 }
