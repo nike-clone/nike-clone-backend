@@ -5,12 +5,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
 import { Color } from './colors.entity';
 import { Gender } from './genders.entity';
@@ -34,10 +30,13 @@ export class Goods {
   salePercentage: number;
 
   @Column()
-  imagePath: string;
+  productImagePrimary: string;
 
-  @Column({ default: 10 })
-  stock: number;
+  @Column('simple-array')
+  productImageExtra: string[];
+
+  // @Column({ default: 10 })
+  // stock: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -53,11 +52,11 @@ export class Goods {
   @JoinColumn()
   gender: Gender;
 
-  @ManyToOne(() => Color, (color) => color.goods)
-  @JoinColumn()
-  color: Color;
+  // @ManyToOne(() => Color, (color) => color.goods)
+  // @JoinColumn()
+  // color: Color;
 
-  @ManyToOne(() => Size, (size) => size.goods)
-  @JoinColumn()
-  size: Size;
+  // @ManyToOne(() => Size, (size) => size.goods)
+  // @JoinColumn()
+  // size: Size;
 }

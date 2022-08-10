@@ -18,6 +18,6 @@ export class Color {
   @Column()
   colorCode: string;
 
-  @OneToMany((type) => Goods, (goods) => goods.color)
-  goods: Goods[];
+  // @OneToMany((type) => Goods, (goods) => goods.color)
+  // goods: Goods[];
 }
