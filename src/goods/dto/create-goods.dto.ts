@@ -1,4 +1,12 @@
-import { IsArray, IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { IsColor } from '../decorators/is-color.decorator';
 import { IsGoodsClassification } from '../decorators/is-goods-classification.decorstor';
 import { IsSize } from '../decorators/is-size.decorator';
@@ -32,6 +40,14 @@ export class CreateGoodsDto {
   @IsGoodsClassification()
   @IsString()
   classification: string;
+
+  @IsOptional()
+  @IsNumber()
+  salePrice: number;
+
+  @IsOptional()
+  @IsNumber()
+  salePercentage: number;
 
   // @IsNumber()
   // @Min(220)

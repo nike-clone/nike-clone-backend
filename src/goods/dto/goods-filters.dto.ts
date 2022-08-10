@@ -17,27 +17,27 @@ export class GoodsFiltersDto {
   @IsGendersList()
   gender: Gender[];
 
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return [`#${value}`];
-    }
+  // @Transform(({ value }) => {
+  //   if (typeof value === 'string') {
+  //     return [`#${value}`];
+  //   }
 
-    return value.map((v) => `#${v}`);
-  })
-  @IsColorCodeList()
-  @IsOptional()
-  // @IsString()
-  colorCode: string[];
+  //   return value.map((v) => `#${v}`);
+  // })
+  // @IsColorCodeList()
+  // @IsOptional()
+  // // @IsString()
+  // colorCode: string[];
 
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return [parseInt(value)];
-    }
-    return value.map((v) => parseInt(v));
-  })
-  @IsOptional()
-  @IsNumber({}, { each: true })
-  size: number[];
+  // @Transform(({ value }) => {
+  //   if (typeof value === 'string') {
+  //     return [parseInt(value)];
+  //   }
+  //   return value.map((v) => parseInt(v));
+  // })
+  // @IsOptional()
+  // @IsNumber({}, { each: true })
+  // size: number[];
 
   @IsOptional()
   @IsString()
