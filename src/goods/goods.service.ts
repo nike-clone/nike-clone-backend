@@ -159,10 +159,14 @@ export class GoodsService {
     return await this.genderRepository.find();
   }
 
-  findOne(id: number) {
+  async findGoodsDetail() {
+    // find goods detail
+    //join with goods-items
+  }
+
+  async findOne(id: number) {
     return this.goodsRepository.findOne({
       where: { id },
-      relations: ['color', 'gender', 'size', 'classification'],
     });
   }
 

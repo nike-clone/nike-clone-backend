@@ -1,9 +1,7 @@
-import { IsArray, IsNumber } from 'class-validator';
+import { IsArray } from 'class-validator';
+import { OneToMany } from 'typeorm';
 
 export class CreateGoodsItemImageDto {
   @IsArray()
   goodsItemImages: string[];
-
-  @IsArray()
-  goodsItemIds: number[];
 }

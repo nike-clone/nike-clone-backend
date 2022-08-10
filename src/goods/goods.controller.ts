@@ -52,7 +52,8 @@ export class GoodsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.goodsService.findOne(+id);
+    return this.goodsService.findGoodsDetail();
+    // return this.goodsService.findOne(+id);
   }
 
   @UseGuards(AdminGuard)
