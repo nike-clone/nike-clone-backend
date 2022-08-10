@@ -54,12 +54,4 @@ export class Goods {
 
   @OneToMany(() => GoodsItem, (goodsItem) => goodsItem.goods)
   goodsItems: GoodsItem[];
-
-  // @ManyToOne(() => Color, (color) => color.goods)
-  // @JoinColumn()
-  // color: Color;
-
-  // @ManyToOne(() => Size, (size) => size.goods)
-  // @JoinColumn()
-  // size: Size;
 }

@@ -18,7 +18,6 @@ export class IsColorCodeListConstraint implements ValidatorConstraintInterface {
   ) {}
 
   async validate(colors: string[], args: ValidationArguments) {
-    console.log(colors);
     const allColors = await this.colorsRepository.find();
     const colorCodeList = allColors.map((colorObject) => colorObject.colorCode);
 
