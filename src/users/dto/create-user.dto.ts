@@ -4,10 +4,10 @@ import {
   IsEmail,
   IsString,
   Matches,
-  Max,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { IsGender } from '../decorators/is-gender.decorator';
 import { NotIn } from '../validators/not-in';
 
 type Gender = 'Male' | 'Female';
@@ -20,6 +20,7 @@ export class CreateUserDto {
   @Matches(/^[A-Za-z0-9\d!@#$%^&*]{8,16}$/)
   password: string;
 
+  @IsString()
   passwordCheck: string;
 
   @Transform((params) => params.value.trim())
@@ -40,5 +41,6 @@ export class CreateUserDto {
   @IsDate()
   birthOfDate: Date;
 
+  @IsGender()
   gender: Gender;
 }
