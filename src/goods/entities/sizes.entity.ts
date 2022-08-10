@@ -6,6 +6,6 @@ export class Size {
   @PrimaryColumn()
   id: number;
 
-  @OneToMany((type) => Goods, (goods) => goods.size)
-  goods: Goods[];
+  // @OneToMany((type) => Goods, (goods) => goods.size)
+  // goods: Goods[];
 }

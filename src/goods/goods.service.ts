@@ -25,23 +25,24 @@ export class GoodsService {
     const {
       name,
       price,
-      imagePath,
+      productImagePrimary,
+      productImageExtra,
       gender,
-      color,
-      size,
-      stock,
+      // color,
+      // size,
+      // stock,
       classification,
     } = createGoodDto;
 
-    const selectedColor = await this.colorRepository.findOne({
-      where: { name: color },
-    });
+    // const selectedColor = await this.colorRepository.findOne({
+    //   where: { name: color },
+    // });
     const selectedGender = await this.genderRepository.findOne({
       where: { gender },
     });
-    const selectedSize = await this.sizeRepository.findOne({
-      where: { id: size },
-    });
+    // const selectedSize = await this.sizeRepository.findOne({
+    //   where: { id: size },
+    // });
     const selectedClassification =
       await this.goodsClassificationsRepository.findOne({
         where: { type: classification },
@@ -50,11 +51,12 @@ export class GoodsService {
     const goods = new Goods();
     goods.name = name;
     goods.price = price;
-    goods.imagePath = imagePath;
-    goods.color = selectedColor;
+    goods.productImagePrimary = productImagePrimary;
+    goods.productImageExtra = productImageExtra;
+    // goods.color = selectedColor;
     goods.gender = selectedGender;
-    goods.size = selectedSize;
-    goods.stock = stock;
+    // goods.size = selectedSize;
+    // goods.stock = stock;
     goods.classification = selectedClassification;
 
     return this.goodsRepository.save(goods);
