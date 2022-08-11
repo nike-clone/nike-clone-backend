@@ -1,5 +1,5 @@
-import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
-import { IsColor } from 'src/goods/decorators/is-color.decorator';
+import { GoodsItem } from '../../goods-items/entities/goods-item.entity';
+import { IsColor } from '../../goods/decorators/is-color.decorator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
