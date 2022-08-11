@@ -110,6 +110,7 @@ export class GoodsService {
         'classification',
         'goodsItems.color',
         'goodsItems.size',
+        'goodsItems.goodsItemImages',
       ],
     });
 
