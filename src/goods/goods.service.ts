@@ -66,7 +66,12 @@ export class GoodsService {
 
     const result = await this.goodsRepository.find({
       where: { ...queryOptions },
-      relations: goodsRelationsList,
+      relations: [
+        'gender',
+        'classification',
+        'goodsItems.size',
+        'goodsItems.color',
+      ],
       take: count,
       skip: offset,
       order: { createdAt: 'DESC' },
@@ -139,7 +144,12 @@ export class GoodsService {
       };
     }
 
-    const goodsRelationsList = ['gender', 'classification'];
+    const goodsRelationsList = [
+      'gender',
+      'classification',
+      'gooodsItems.sie',
+      'goodsItems.color',
+    ];
 
     if (goodsFilters.colorCode) {
       const colorCodes = goodsFilters.colorCode.map((code) => {
