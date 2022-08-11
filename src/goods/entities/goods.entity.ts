@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Gender } from './genders.entity';
-import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
+import { GoodsItem } from '../../goods-items/entities/goods-item.entity';
 
 @Entity()
 export class Goods {

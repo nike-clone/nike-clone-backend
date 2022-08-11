@@ -1,7 +1,7 @@
-import { GoodsItemImages } from 'src/goods-item-images/entities/goods-item-image.entity';
-import { Color } from 'src/goods/entities/colors.entity';
-import { Goods } from 'src/goods/entities/goods.entity';
-import { Size } from 'src/goods/entities/sizes.entity';
+import { GoodsItemImages } from '../../goods-item-images/entities/goods-item-image.entity';
+import { Color } from '../../goods/entities/colors.entity';
+import { Goods } from '../../goods/entities/goods.entity';
+import { Size } from '../../goods/entities/sizes.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
