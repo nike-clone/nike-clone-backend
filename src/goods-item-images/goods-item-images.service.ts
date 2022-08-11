@@ -14,6 +14,8 @@ export class GoodsItemImagesService {
   async create(createGoodsItemImageDto: CreateGoodsItemImageDto) {
     const images = await this.goodsItemImagesRepository.create({
       goodsItemImages: createGoodsItemImageDto.goodsItemImages,
+      goodsName: createGoodsItemImageDto.goodsName,
+      color: createGoodsItemImageDto.color,
     });
 
     return this.goodsItemImagesRepository.save(images);
