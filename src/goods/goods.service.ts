@@ -1,6 +1,7 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
+import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
 import { Repository } from 'typeorm';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { GoodsFiltersDto } from './dto/goods-filters.dto';
@@ -119,6 +120,12 @@ export class GoodsService {
       ],
     });
 
+    // make colors list of the goodsItem
+    const colors = this.getColorsFromGoodsItems(goods.goodsItems);
+    Object.assign(goods, {
+      colors,
+    });
+
     return goods;
   }
 
@@ -126,6 +133,14 @@ export class GoodsService {
     return this.goodsRepository.findOne({
       where: { id },
     });
+  }
+
+  private getColorsFromGoodsItems(goodsItems: GoodsItem[]): Color[] {
+    const allColors = goodsItems.map((item) => item.color);
+    const colors = [
+      ...new Map(allColors.map((color) => [color.id, color])).values(),
+    ];
+    return colors;
   }
 
   private async generateGoodsQueryOptionsAndRelationsList(
