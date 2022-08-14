@@ -9,7 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CartItems } from 'src/cart-items/entities/cart-item.entity';
+import { CartItems } from '../../cart-items/entities/cart-item.entity';
 
 @Entity()
 export class GoodsItem {

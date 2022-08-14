@@ -1,16 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
-import { QueryRequired } from 'src/decorators/query-required.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { CartsService } from './carts.service';
 
 @Controller('carts')
@@ -26,7 +17,7 @@ export class CartsController {
   @UseGuards(AuthGuard)
   @Get()
   findCartByUserId(@CurrentUser() user: User) {
-    return this.cartsService.findCartByUserId(user.id);
+    return this.cartsService.findOne(user);
   }
 
   @UseGuards(AuthGuard)

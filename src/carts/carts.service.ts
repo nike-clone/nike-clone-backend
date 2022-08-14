@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -29,6 +24,19 @@ export class CartsService {
     });
 
     return this.cartsRepository.save(cart);
+  }
+
+  async findOne(user: User) {
+    const cart = await this.cartsRepository.findOne({
+      where: { user: { id: user.id } },
+      relations: [
+        'cartItems.goodsItem.color',
+        'cartItems.goodsItem.size',
+        'cartItems.goodsItem.goods',
+      ],
+    });
+
+    return cart;
   }
 
   async findCartByUserId(userId: string) {

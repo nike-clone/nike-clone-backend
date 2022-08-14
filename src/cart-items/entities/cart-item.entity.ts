@@ -1,14 +1,7 @@
-import { Cart } from 'src/carts/entities/cart.entity';
-import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
-import { Goods } from 'src/goods/entities/goods.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  RelationId,
-} from 'typeorm';
+import { Cart } from '../../carts/entities/cart.entity';
+import { GoodsItem } from '../../goods-items/entities/goods-item.entity';
+
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class CartItems {
