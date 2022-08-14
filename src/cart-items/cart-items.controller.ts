@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -25,21 +26,29 @@ export class CartItemsController {
     @Body() createCartItemDto: CreateCartItemDto,
     @CurrentUser() user: User,
   ) {
+    // console.log(user);
     return this.cartItemsService.createCartItem(createCartItemDto, user);
   }
 
   @UseGuards(AuthGuard)
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCartItemDto: UpdateCartItemDto,
-    @CurrentUser() user: any,
-  ) {
-    return this.cartItemsService.updateCartItem(+id, updateCartItemDto, user);
+  @Get()
+  findAll(@CurrentUser() user: User) {
+    return this.cartItemsService.findAllCartItems(user);
   }
 
+  @UseGuards(AuthGuard)
+  @Patch(':cartItemId')
+  update(
+    @Param('cartItemId', ParseIntPipe) id: number,
+    @Body() updateCartItemDto: UpdateCartItemDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.cartItemsService.updateCartItem(id, updateCartItemDto, user);
+  }
+
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartItemsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: User) {
+    return this.cartItemsService.remove(id, user);
   }
 }

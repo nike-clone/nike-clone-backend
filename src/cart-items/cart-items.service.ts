@@ -1,11 +1,14 @@
 import {
+  BadRequestException,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartsService } from 'src/carts/carts.service';
-import { Goods } from 'src/goods/entities/goods.entity';
+import { Cart } from 'src/carts/entities/cart.entity';
+import { GoodsItemsService } from 'src/goods-items/goods-items.service';
 import { GoodsService } from 'src/goods/goods.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -18,108 +21,97 @@ export class CartItemsService {
   constructor(
     @InjectRepository(CartItems)
     private cartItemsRepository: Repository<CartItems>,
+    @InjectRepository(Cart) private cartsRepository: Repository<Cart>,
     private cartsService: CartsService,
-    private goodsService: GoodsService,
+    private goodsItemsService: GoodsItemsService,
   ) {}
 
-  async createCartItem(createCartItemDto: CreateCartItemDto, user: any) {
-    const { quantity, goodsId } = createCartItemDto;
+  async createCartItem(createCartItemDto: CreateCartItemDto, user: User) {
+    const cart = await this.cartsRepository.findOne({
+      where: { user: { id: user.id } },
+      relations: ['cartItems.goodsItem'],
+    });
 
-    const cart = await this.cartsService.findCartByUserId(user.userId);
-    if (!cart) {
-      throw new NotFoundException('Wrong user id.');
-    }
-
-    const isGoodsInCart = await this.isGoodsInCart(goodsId);
-
-    if (isGoodsInCart) {
-      // cart item already exists
-      const cartItem = await this.cartItemsRepository.findOne({
-        where: { goods: { id: goodsId } },
-      });
-      cartItem.quantity += quantity;
-
-      await this.cartItemsRepository.save(cartItem);
-    } else {
-      // adding new goods to the cart
-      const goods = await this.goodsService.findOne(goodsId);
-      if (!goods) {
-        throw new NotFoundException('Wrong goods id.');
+    // check goodsItem aleady exists in the cart
+    cart.cartItems.forEach((cartItem) => {
+      if (cartItem.goodsItem.id === createCartItemDto.goodsItemId) {
+        throw new NotAcceptableException(
+          `The goodsItem (id: ${cartItem.goodsItem.id}) already exists in the cart. Use "UPDATE" method instead.`,
+        );
       }
+    });
 
-      const cartItem = await this.cartItemsRepository.create({
-        quantity,
-        goods,
-        cart,
-      });
+    const goodsItem = await this.goodsItemsService.findOne(
+      createCartItemDto.goodsItemId,
+    );
 
-      await this.cartItemsRepository.save(cartItem);
-    }
+    const cartItem = await this.cartItemsRepository.create({
+      cart,
+      goodsItem,
+      quantity: createCartItemDto.quantity,
+    });
 
-    return {
-      message: 'The goods was added to the cart.',
-    };
+    return this.cartItemsRepository.save(cartItem);
   }
 
-  async findAllCartItems(cartId: number) {
+  async findAllCartItems(user: User) {
+    const cart = await this.cartsService.findCartByUserId(user.id);
+
     const cartItems = await this.cartItemsRepository.find({
-      where: { cart: { id: cartId } },
-      relations: ['goods'],
+      where: { cart: { id: cart.id } },
+      relations: ['goodsItem.color', 'goodsItem.size', 'goodsItem.goods'],
     });
 
     return cartItems;
   }
 
   async updateCartItem(
-    id: number,
+    cartItemId: number,
     updateCartItemDto: UpdateCartItemDto,
-    user: any,
+    user: User,
   ) {
     const cartItem = await this.cartItemsRepository.findOne({
-      where: { id },
-      relations: ['cart.user'],
+      where: { id: cartItemId },
+      relations: ['cart'],
     });
+
     if (!cartItem) {
-      throw new NotFoundException('Cart item not foud.');
+      throw new NotFoundException('CartItem not found.');
     }
 
-    const requestedUserId = user.userId;
-    const cartUserId = cartItem.cart.user.id;
+    // check if the user is the owner of the cart
+    this.validateCartOwner(cartItem, user);
 
-    console.log(requestedUserId, cartUserId);
-    if (requestedUserId !== cartUserId) {
-      throw new UnauthorizedException();
+    cartItem.quantity = updateCartItemDto.quantity;
+
+    return await this.cartItemsRepository.save(cartItem);
+    // return cartItem;
+  }
+
+  async remove(id: number, user: User) {
+    const cartItem = await this.cartItemsRepository.findOne({
+      where: { id },
+      relations: ['cart'],
+    });
+
+    if (!cartItem) {
+      throw new NotFoundException('CartItem not found.');
     }
 
-    Object.assign(cartItem, updateCartItemDto);
+    // check if the user is the owner of the cart
+    this.validateCartOwner(cartItem, user);
 
-    const updatedCartItem = await this.cartItemsRepository.save(cartItem);
+    const deletedCartItem = await this.cartItemsRepository.remove(cartItem);
 
     return {
-      message: `The cart item(id: ${id}) was successfully updated.`,
-      data: updatedCartItem,
+      message: `CartItem (id: ${id}) was deleted.`,
+      deletedCartItem,
     };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cartItem`;
-  }
-
-  async isGoodsInCart(goodsId: number) {
-    const cartItemList = await this.cartItemsRepository.find({
-      where: { goods: { id: goodsId } },
-    });
-    console.log(cartItemList);
-    return cartItemList.length > 0;
-  }
-
-  async calculateTotalPrice(cartId: number): Promise<number> {
-    const items: CartItems[] = await this.findAllCartItems(cartId);
-
-    let total = 0;
-    items.forEach((item) => {
-      total += item.goods.price * item.quantity;
-    });
-    return total;
+  private validateCartOwner(cartItem: CartItems, user: User) {
+    if (cartItem.cart.user.id !== user.id) {
+      throw new UnauthorizedException();
+    }
   }
 }

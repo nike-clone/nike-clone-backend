@@ -8,6 +8,7 @@ import {
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
+import { UsersService } from 'src/users/users.service';
 
 declare module 'express' {
   export interface Request {
@@ -17,7 +18,10 @@ declare module 'express' {
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
 
   canActivate(
     context: ExecutionContext,
@@ -26,7 +30,7 @@ export class AuthGuard implements CanActivate {
     return this.validateRequest(request);
   }
 
-  private validateRequest(request: Request) {
+  private async validateRequest(request: Request) {
     if (!request.headers.authorization) {
       throw new UnauthorizedException();
     }
@@ -34,7 +38,8 @@ export class AuthGuard implements CanActivate {
 
     try {
       const userInfo = this.authService.verify(jwtString);
-      request.user = userInfo;
+      const user = await this.usersService.findUserById(userInfo.userId);
+      request.user = user;
       return true;
     } catch (err) {
       throw new UnauthorizedException();

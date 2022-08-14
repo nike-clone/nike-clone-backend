@@ -7,9 +7,14 @@ import { EmailModule } from 'src/email/email.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { Cart } from 'src/carts/entities/cart.entity';
 import { CartsService } from 'src/carts/carts.service';
+import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Cart]), EmailModule, AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Cart, CartItems]),
+    EmailModule,
+    AuthModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService, CartsService],
   exports: [UsersService],

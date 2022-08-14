@@ -18,10 +18,10 @@ export class Cart {
   // @Column({ default: 0 })
   // totalPrice: number;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.cart)
   @JoinColumn()
   user: User;
 
-  @OneToMany(() => CartItems, (cartItem) => cartItem.cart, { cascade: true })
+  @OneToMany(() => CartItems, (cartItem) => cartItem.cart)
   cartItems: CartItems[];
 }

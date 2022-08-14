@@ -49,9 +49,6 @@ export class Goods {
   @JoinColumn()
   gender: Gender;
 
-  @OneToMany(() => CartItems, (cartItem) => cartItem.goods)
-  cartItems: CartItems[];
-
   @OneToMany(() => GoodsItem, (goodsItem) => goodsItem.goods)
   goodsItems: GoodsItem[];
 }

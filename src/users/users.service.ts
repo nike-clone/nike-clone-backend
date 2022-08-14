@@ -22,6 +22,7 @@ import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CartsService } from 'src/carts/carts.service';
+import { Cart } from 'src/carts/entities/cart.entity';
 
 const scrypt = promisify(_scrypt);
 
@@ -180,6 +181,14 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('user not found.');
     }
+
+    return user;
+  }
+  async findUserCart(id: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['cart'],
+    });
 
     return user;
   }

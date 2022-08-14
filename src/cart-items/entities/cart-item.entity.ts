@@ -1,13 +1,11 @@
 import { Cart } from 'src/carts/entities/cart.entity';
+import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
 import { Goods } from 'src/goods/entities/goods.entity';
 import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
@@ -20,19 +18,9 @@ export class CartItems {
   @Column()
   quantity: number;
 
-  @ManyToOne(() => Goods)
-  @JoinColumn()
-  goods: Goods;
+  @ManyToOne(() => GoodsItem, (goodsItem) => goodsItem.cartItems)
+  goodsItem: GoodsItem;
 
-  @ManyToOne(() => Cart, (cart) => cart.cartItems, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
+  @ManyToOne(() => Cart, (cart) => cart.cartItems)
   cart: Cart;
-
-  @RelationId((cartItem: CartItems) => cartItem.cart)
-  cartId: number;
-
-  @RelationId((cartItem: CartItems) => cartItem.goods)
-  goodsId: number;
 }

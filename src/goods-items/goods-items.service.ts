@@ -47,4 +47,11 @@ export class GoodsItemsService {
 
     return this.goodsItemsRepository.save(goodsItem);
   }
+
+  async findOne(id: number) {
+    return this.goodsItemsRepository.findOne({
+      where: { id },
+      relations: ['color', 'size', 'goods', 'goodsItemImages', 'cartItems'],
+    });
+  }
 }

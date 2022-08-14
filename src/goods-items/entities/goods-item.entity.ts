@@ -2,7 +2,14 @@ import { GoodsItemImages } from '../../goods-item-images/entities/goods-item-ima
 import { Color } from '../../goods/entities/colors.entity';
 import { Goods } from '../../goods/entities/goods.entity';
 import { Size } from '../../goods/entities/sizes.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 
 @Entity()
 export class GoodsItem {
@@ -26,4 +33,7 @@ export class GoodsItem {
     (goodsItemImages) => goodsItemImages.goodsItems,
   )
   goodsItemImages: GoodsItemImages;
+
+  @OneToMany(() => CartItems, (cartItem) => cartItem.goodsItem)
+  cartItems: CartItems[];
 }
