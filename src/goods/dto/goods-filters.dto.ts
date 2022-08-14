@@ -26,7 +26,6 @@ export class GoodsFiltersDto {
   })
   @IsColorCodeList()
   @IsOptional()
-  // @IsString()
   colorCode: string[];
 
   @Transform(({ value }) => {

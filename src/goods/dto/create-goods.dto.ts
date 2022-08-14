@@ -1,4 +1,12 @@
-import { IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { IsColor } from '../decorators/is-color.decorator';
 import { IsGoodsClassification } from '../decorators/is-goods-classification.decorstor';
 import { IsSize } from '../decorators/is-size.decorator';
@@ -12,27 +20,38 @@ export class CreateGoodsDto {
   price: number;
 
   @IsString()
-  imagePath: string;
+  productImagePrimary: string;
+
+  @IsArray()
+  productImageExtra: string[];
 
   @IsEnum(GenderType, {
     message: `Gender must be 'Male', 'Female' or 'Unisex'.`,
   })
   gender: string;
 
-  @IsNumber()
-  stock: number;
+  // @IsNumber()
+  // stock: number;
 
-  @IsColor({ message: 'Unacceptable color value.' })
-  @IsString()
-  color: string;
+  // @IsColor({ message: 'Unacceptable color value.' })
+  // @IsString()
+  // color: string;
 
   @IsGoodsClassification()
   @IsString()
   classification: string;
 
+  @IsOptional()
   @IsNumber()
-  @Min(220)
-  @Max(380)
-  @IsSize({ message: 'Unacceptable size value.' })
-  size: number;
+  salePrice: number;
+
+  @IsOptional()
+  @IsNumber()
+  salePercentage: number;
+
+  // @IsNumber()
+  // @Min(220)
+  // @Max(380)
+  // @IsSize({ message: 'Unacceptable size value.' })
+  // size: number;
 }

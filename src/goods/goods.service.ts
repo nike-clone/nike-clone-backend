@@ -1,10 +1,10 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GoodsClassification } from 'src/goods-classification/entities/goods-classification.entity';
+import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
 import { Repository } from 'typeorm';
 import { CreateGoodsDto } from './dto/create-goods.dto';
 import { GoodsFiltersDto } from './dto/goods-filters.dto';
-import { UpdateGoodsDto } from './dto/update-goods.dto';
 import { Color } from './entities/colors.entity';
 import { Gender } from './entities/genders.entity';
 import { Goods } from './entities/goods.entity';
@@ -25,23 +25,18 @@ export class GoodsService {
     const {
       name,
       price,
-      imagePath,
+      productImagePrimary,
+      productImageExtra,
       gender,
-      color,
-      size,
-      stock,
       classification,
+      salePrice,
+      salePercentage,
     } = createGoodDto;
 
-    const selectedColor = await this.colorRepository.findOne({
-      where: { name: color },
-    });
     const selectedGender = await this.genderRepository.findOne({
       where: { gender },
     });
-    const selectedSize = await this.sizeRepository.findOne({
-      where: { id: size },
-    });
+
     const selectedClassification =
       await this.goodsClassificationsRepository.findOne({
         where: { type: classification },
@@ -50,12 +45,15 @@ export class GoodsService {
     const goods = new Goods();
     goods.name = name;
     goods.price = price;
-    goods.imagePath = imagePath;
-    goods.color = selectedColor;
+    goods.productImagePrimary = productImagePrimary;
+    goods.productImageExtra = productImageExtra;
     goods.gender = selectedGender;
-    goods.size = selectedSize;
-    goods.stock = stock;
     goods.classification = selectedClassification;
+
+    if (salePrice && salePercentage) {
+      goods.salePrice = salePrice;
+      goods.salePercentage = salePercentage;
+    }
 
     return this.goodsRepository.save(goods);
   }
@@ -64,12 +62,109 @@ export class GoodsService {
     const offset = goodsFilters.offset || 0;
     const count = goodsFilters.count || 20;
 
+    const { queryOptions, goodsRelationsList } =
+      await this.generateGoodsQueryOptionsAndRelationsList(goodsFilters);
+
+    const result = await this.goodsRepository.find({
+      where: { ...queryOptions },
+      relations: [
+        'gender',
+        'classification',
+        'goodsItems.size',
+        'goodsItems.color',
+      ],
+      take: count,
+      skip: offset,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      data: result,
+      meta: {
+        requestedCount: count,
+        offset,
+        responseCount: result.length,
+      },
+    };
+  }
+
+  async findAllSizes() {
+    const result = await this.sizeRepository.find();
+    const sizes = [];
+    for (const el of result) {
+      sizes.push(el.id);
+    }
+    return sizes;
+  }
+
+  async findAllColors() {
+    return await this.colorRepository.find();
+  }
+
+  async findAllGenders() {
+    return await this.genderRepository.find();
+  }
+
+  async findGoodsDetail(id: number, goodsFilters: GoodsFiltersDto) {
+    const { queryOptions, goodsRelationsList } =
+      await this.generateGoodsQueryOptionsAndRelationsList(goodsFilters);
+
+    const goods = await this.goodsRepository.findOne({
+      where: { id, ...queryOptions },
+      relations: [
+        'gender',
+        'classification',
+        'goodsItems.color',
+        'goodsItems.size',
+        'goodsItems.goodsItemImages',
+      ],
+    });
+
+    // make colors list of the goodsItem
+    const colors = this.getColorsFromGoodsItems(goods.goodsItems);
+    Object.assign(goods, {
+      colors,
+    });
+
+    return goods;
+  }
+
+  async findOne(id: number) {
+    return this.goodsRepository.findOne({
+      where: { id },
+    });
+  }
+
+  private getColorsFromGoodsItems(goodsItems: GoodsItem[]): Color[] {
+    const allColors = goodsItems.map((item) => item.color);
+    const colors = [
+      ...new Map(allColors.map((color) => [color.id, color])).values(),
+    ];
+    return colors;
+  }
+
+  private async generateGoodsQueryOptionsAndRelationsList(
+    goodsFilters: GoodsFiltersDto,
+  ) {
     const queryOptions = {
-      color: null,
-      size: null,
       gender: null,
       classification: null,
+      goodsItems: null,
     };
+
+    if (goodsFilters.size || goodsFilters.colorCode) {
+      queryOptions.goodsItems = {
+        color: null,
+        size: null,
+      };
+    }
+
+    const goodsRelationsList = [
+      'gender',
+      'classification',
+      'gooodsItems.sie',
+      'goodsItems.color',
+    ];
 
     if (goodsFilters.colorCode) {
       const colorCodes = goodsFilters.colorCode.map((code) => {
@@ -83,7 +178,9 @@ export class GoodsService {
       if (!color) {
         throw new NotAcceptableException('Unacceptable color code');
       }
-      queryOptions.color = color;
+
+      queryOptions.goodsItems.color = color;
+      goodsRelationsList.push('goodsItems.color');
     }
 
     if (goodsFilters.size) {
@@ -98,7 +195,8 @@ export class GoodsService {
       if (!size) {
         throw new NotAcceptableException('Unacceptable size');
       }
-      queryOptions.size = size;
+      queryOptions.goodsItems.size = size;
+      goodsRelationsList.push('goodsItems.size');
     }
 
     if (goodsFilters.gender) {
@@ -125,46 +223,6 @@ export class GoodsService {
       queryOptions.classification = classification;
     }
 
-    const result = await this.goodsRepository.find({
-      where: { ...queryOptions },
-      relations: ['color', 'gender', 'size', 'classification'],
-      take: count,
-      skip: offset,
-      order: { createdAt: 'DESC' },
-    });
-
-    return result;
-  }
-
-  async findAllSizes() {
-    const result = await this.sizeRepository.find();
-    const sizes = [];
-    for (const el of result) {
-      sizes.push(el.id);
-    }
-    return sizes;
-  }
-
-  async findAllColors() {
-    return await this.colorRepository.find();
-  }
-
-  async findAllGenders() {
-    return await this.genderRepository.find();
-  }
-
-  findOne(id: number) {
-    return this.goodsRepository.findOne({
-      where: { id },
-      relations: ['color', 'gender', 'size', 'classification'],
-    });
-  }
-
-  update(id: number, updateGoodDto: UpdateGoodsDto) {
-    return `This action updates a #${id} good`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} good`;
+    return { queryOptions, goodsRelationsList };
   }
 }

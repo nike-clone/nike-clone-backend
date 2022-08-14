@@ -5,16 +5,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
-import { Color } from './colors.entity';
 import { Gender } from './genders.entity';
-import { Size } from './sizes.entity';
+import { GoodsItem } from '../../goods-items/entities/goods-item.entity';
 
 @Entity()
 export class Goods {
@@ -34,10 +30,10 @@ export class Goods {
   salePercentage: number;
 
   @Column()
-  imagePath: string;
+  productImagePrimary: string;
 
-  @Column({ default: 10 })
-  stock: number;
+  @Column('simple-array')
+  productImageExtra: string[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -53,23 +49,9 @@ export class Goods {
   @JoinColumn()
   gender: Gender;
 
-  @ManyToOne(() => Color, (color) => color.goods)
-  @JoinColumn()
-  color: Color;
-
-  @ManyToOne(() => Size, (size) => size.goods)
-  @JoinColumn()
-  size: Size;
-
   @OneToMany(() => CartItems, (cartItem) => cartItem.goods)
   cartItems: CartItems[];
 
-  @RelationId((goods: Goods) => goods.gender)
-  genderId: number;
-
-  @RelationId((goods: Goods) => goods.color)
-  colorId: number;
-
-  @RelationId((goods: Goods) => goods.size)
-  sizeId: number;
+  @OneToMany(() => GoodsItem, (goodsItem) => goodsItem.goods)
+  goodsItems: GoodsItem[];
 }

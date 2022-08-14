@@ -22,7 +22,7 @@ export class IsColorConstraint implements ValidatorConstraintInterface {
       where: { name: color },
     });
 
-    if (!selectedColor) {
+    if (!selectedColor || !color) {
       return false;
     }
 
