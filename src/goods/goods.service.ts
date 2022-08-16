@@ -90,17 +90,6 @@ export class GoodsService {
     };
   }
 
-  private formatGoosds(goods) {
-    // goods.goodsItems의 각 요소의 size를 size : 250 형태로 변환
-    goods.forEach((g) => {
-      g.goodsItems.forEach((item) => {
-        item.size = item.size.id;
-      });
-    });
-
-    return goods;
-  }
-
   async findAllSizes() {
     const result = await this.sizeRepository.find();
     const sizes = [];
@@ -133,19 +122,32 @@ export class GoodsService {
       ],
     });
 
+    const formattedGoods = this.formatGoosds([goods])[0];
+
     // make colors list of the goodsItem
     const colors = this.getColorsFromGoodsItems(goods.goodsItems);
-    Object.assign(goods, {
+    Object.assign(formattedGoods, {
       colors,
     });
 
-    return goods;
+    return formattedGoods;
   }
 
   async findOne(id: number) {
     return this.goodsRepository.findOne({
       where: { id },
     });
+  }
+
+  private formatGoosds(goods) {
+    // goods.goodsItems의 각 요소의 size를 size : 250 형태로 변환
+    goods.forEach((g) => {
+      g.goodsItems.forEach((item) => {
+        item.size = item.size.id;
+      });
+    });
+
+    return goods;
   }
 
   private getColorsFromGoodsItems(goodsItems: GoodsItem[]): Color[] {
