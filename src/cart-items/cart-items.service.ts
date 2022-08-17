@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { CartItems } from './entities/cart-item.entity';
+import * as _ from 'lodash';
 
 @Injectable()
 export class CartItemsService {
@@ -49,7 +50,10 @@ export class CartItemsService {
       quantity: createCartItemDto.quantity,
     });
 
-    return this.cartItemsRepository.save(cartItem);
+    const savedCartItem = await this.cartItemsRepository.save(cartItem);
+    const formattedCartItem = this.formatCartItem(savedCartItem);
+    delete formattedCartItem.cart.cartItems;
+    return formattedCartItem;
   }
 
   async findAllCartItems(user: User) {
@@ -60,7 +64,12 @@ export class CartItemsService {
       relations: ['goodsItem.color', 'goodsItem.size', 'goodsItem.goods'],
     });
 
-    return cartItems;
+    const formattedCartItemList = [];
+    cartItems.forEach((cartItem) => {
+      formattedCartItemList.push(this.formatCartItem(cartItem));
+    });
+
+    return formattedCartItemList;
   }
 
   async updateCartItem(
@@ -103,7 +112,7 @@ export class CartItemsService {
   async remove(id: number, user: User) {
     const cartItem = await this.cartItemsRepository.findOne({
       where: { id },
-      relations: ['cart'],
+      relations: ['cart.user'],
     });
 
     if (!cartItem) {
@@ -114,6 +123,8 @@ export class CartItemsService {
     this.validateCartOwner(cartItem, user);
 
     const deletedCartItem = await this.cartItemsRepository.remove(cartItem);
+
+    delete deletedCartItem.cart.user;
 
     return {
       message: `CartItem (id: ${id}) was deleted.`,
@@ -129,5 +140,14 @@ export class CartItemsService {
 
   private checkStockIsAvailable(quantity: number, cartItem: CartItems) {
     return quantity <= cartItem.goodsItem.stock;
+  }
+
+  private formatCartItem(cartItem: CartItems) {
+    const sizeValue = cartItem.goodsItem.size.id;
+    const formattedCartItem: any = _.cloneDeep(cartItem);
+    formattedCartItem.goodsItem['size'] = sizeValue;
+    delete formattedCartItem.cartItems;
+
+    return formattedCartItem;
   }
 }

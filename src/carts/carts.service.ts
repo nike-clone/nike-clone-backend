@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as _ from 'lodash';
 import { CartItems } from 'src/cart-items/entities/cart-item.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -36,7 +37,9 @@ export class CartsService {
       ],
     });
 
-    return cart;
+    const formattedCart = this.formatCart(cart);
+
+    return formattedCart;
   }
 
   async findCartByUserId(userId: string) {
@@ -59,8 +62,22 @@ export class CartsService {
 
     await this.cartsRepository.remove(oldCart);
 
-    const newCart = await this.cartsRepository.create({ user });
-    return this.cartsRepository.save(newCart);
+    const cart = await this.cartsRepository.create({ user });
+    const newCart = await this.cartsRepository.save(cart);
+
+    const refreshedCart = await this.cartsRepository.findOne({
+      where: { id: newCart.id },
+      relations: [
+        'cartItems.goodsItem.color',
+        'cartItems.goodsItem.size',
+        'cartItems.goodsItem.goods',
+      ],
+    });
+
+    return {
+      userId: user.id,
+      newCart: refreshedCart,
+    };
   }
 
   // async updateCartByUserToken(updateCartDto: UpdateCartDto, user: any) {
@@ -77,4 +94,25 @@ export class CartsService {
   // remove(id: number) {
   //   return `This action removes a #${id} cart`;
   // }
+
+  private formatCart(cart: Cart) {
+    const formattedCart: any = _.cloneDeep(cart);
+    const formattedCartItems = [];
+    formattedCart.cartItems.forEach((cartItem) => {
+      formattedCartItems.push(this.formatCartItem(cartItem));
+    });
+    formattedCart.cartItems = formattedCartItems;
+
+    return formattedCart;
+  }
+
+  private formatCartItem(cartItem: CartItems) {
+    const sizeValue = cartItem.goodsItem.size.id;
+    const formattedCartItem: any = {
+      ...cartItem,
+    };
+    formattedCartItem.goodsItem['size'] = sizeValue;
+
+    return formattedCartItem;
+  }
 }
