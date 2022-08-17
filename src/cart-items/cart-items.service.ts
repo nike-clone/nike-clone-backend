@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -9,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CartsService } from 'src/carts/carts.service';
 import { Cart } from 'src/carts/entities/cart.entity';
 import { GoodsItemsService } from 'src/goods-items/goods-items.service';
-import { GoodsService } from 'src/goods/goods.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
@@ -72,7 +70,7 @@ export class CartItemsService {
   ) {
     const cartItem = await this.cartItemsRepository.findOne({
       where: { id: cartItemId },
-      relations: ['cart'],
+      relations: ['cart.user', 'goodsItem'],
     });
 
     if (!cartItem) {
@@ -82,10 +80,24 @@ export class CartItemsService {
     // check if the user is the owner of the cart
     this.validateCartOwner(cartItem, user);
 
+    if (!this.checkStockIsAvailable(updateCartItemDto.quantity, cartItem)) {
+      throw new NotAcceptableException(
+        `Cannot set quantity greater than stock(current stock: ${cartItem.goodsItem.stock})`,
+      );
+    }
+
     cartItem.quantity = updateCartItemDto.quantity;
 
-    return await this.cartItemsRepository.save(cartItem);
-    // return cartItem;
+    const upadtedCartItem = await this.cartItemsRepository.save(cartItem);
+
+    // return upadtedCartItem;
+    return {
+      message: `CartItem(id: ${cartItem.id}) was updated.`,
+      updatedCartItem: {
+        id: upadtedCartItem.id,
+        quantity: upadtedCartItem.quantity,
+      },
+    };
   }
 
   async remove(id: number, user: User) {
@@ -113,5 +125,9 @@ export class CartItemsService {
     if (cartItem.cart.user.id !== user.id) {
       throw new UnauthorizedException();
     }
+  }
+
+  private checkStockIsAvailable(quantity: number, cartItem: CartItems) {
+    return quantity <= cartItem.goodsItem.stock;
   }
 }
