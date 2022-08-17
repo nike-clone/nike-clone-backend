@@ -12,7 +12,12 @@ import {
   ServeStaticModule,
   ServeStaticModuleOptions,
 } from '@nestjs/serve-static';
+
+import { CartsModule } from './carts/carts.module';
+import { CartItemsModule } from './cart-items/cart-items.module';
+
 import { resolve } from 'path';
+
 import { GoodsClassificationModule } from './goods-classification/goods-classification.module';
 import { GoodsItemsModule } from './goods-items/goods-items.module';
 import { GoodsItemImagesModule } from './goods-item-images/goods-item-images.module';
@@ -53,6 +58,8 @@ console.log(OrmConfig);
         } as ServeStaticModuleOptions;
       })(),
     ),
+    CartsModule,
+    CartItemsModule,
     GoodsClassificationModule,
     GoodsItemsModule,
     GoodsItemImagesModule,

@@ -1,0 +1,40 @@
+Goods {
+  "id": 16,
+  "name": "카이리 인피니티 EP",
+  "stock": 30,
+  "color": {
+    "id": 12,
+    "name": "보라색",
+    "colorCode": "#6241ab"
+  },
+  ...
+}
+
+Goods {
+  "id": 17,
+  "name": "카이리 인피니티 EP",
+  "stock": 28,
+  "color": {
+    "id": 13,
+    "name": "흰색",
+    "colorCode": "#ffffff"
+  },
+  ...
+}
+
+Goods {
+  "id": 18,
+  "name": "카이리 인피니티 EP",
+  "stock": 15,
+  "color": {
+    "id": 14,
+    "name": "빨강색",
+    "colorCode": "#b42519"
+  },
+  ...
+}
+
+GET /api/goods?serial_number=27
+
+
+

@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
@@ -19,6 +21,8 @@ import { UserInfo } from './UserInfo';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CartsService } from 'src/carts/carts.service';
+import { Cart } from 'src/carts/entities/cart.entity';
 
 const scrypt = promisify(_scrypt);
 
@@ -29,6 +33,8 @@ export class UsersService {
     private emailService: EmailService,
     private connection: Connection,
     private authService: AuthService,
+    @Inject(forwardRef(() => CartsService))
+    private cartsService: CartsService,
   ) {}
 
   async signup(createUserDto: Partial<CreateUserDto>) {
@@ -59,11 +65,14 @@ export class UsersService {
     } catch (e) {
       console.error(e);
       isTransectionReflected = false;
+      console.log(e);
     }
 
     if (!isTransectionReflected) {
       throw new InternalServerErrorException('User could not be created.');
     }
+
+    await this.cartsService.create(user.id);
 
     return this.authService.login({
       id: user.id,
@@ -165,6 +174,23 @@ export class UsersService {
       name: user.name,
       email: user.email,
     };
+  }
+
+  async findUserById(id: string) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('user not found.');
+    }
+
+    return user;
+  }
+  async findUserCart(id: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['cart'],
+    });
+
+    return user;
   }
 
   // TODO : User update 구현

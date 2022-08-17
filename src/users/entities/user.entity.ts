@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Cart } from '../../carts/entities/cart.entity';
+import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
 import { Gender } from '../types/gender.type';
-// import { UserStatus } from '../types/user-status.type';
 
 @Entity()
 export class User {
@@ -33,4 +33,7 @@ export class User {
 
   @Column({ default: false })
   isAdmin: boolean;
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  cart: Cart;
 }
