@@ -31,18 +31,22 @@ export class CartItemsService {
       relations: ['cartItems.goodsItem'],
     });
 
-    // check goodsItem aleady exists in the cart
-    cart.cartItems.forEach((cartItem) => {
-      if (cartItem.goodsItem.id === createCartItemDto.goodsItemId) {
-        throw new NotAcceptableException(
-          `The goodsItem (id: ${cartItem.goodsItem.id}) already exists in the cart. Use "UPDATE" method instead.`,
-        );
-      }
-    });
-
     const goodsItem = await this.goodsItemsService.findOne(
       createCartItemDto.goodsItemId,
     );
+
+    // return cart;
+    // check goodsItem aleady exists in the cart
+    cart.cartItems.forEach((cartItem) => {
+      if (
+        cartItem.goodsItem &&
+        cartItem.goodsItem.id === createCartItemDto.goodsItemId
+      ) {
+        throw new NotAcceptableException(
+          `The goodsItem (id: ${cartItem.goodsItem.id}) already exists in the cart. Use "PATCH" method instead.`,
+        );
+      }
+    });
 
     const cartItem = await this.cartItemsRepository.create({
       cart,
@@ -57,7 +61,9 @@ export class CartItemsService {
   }
 
   async findAllCartItems(user: User) {
-    const cart = await this.cartsService.findCartByUserId(user.id);
+    const cart = await this.cartsRepository.findOne({
+      where: { user: { id: user.id } },
+    });
 
     const cartItems = await this.cartItemsRepository.find({
       where: { cart: { id: cart.id } },

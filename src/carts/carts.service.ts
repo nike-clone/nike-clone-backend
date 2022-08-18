@@ -13,13 +13,13 @@ export class CartsService {
     @InjectRepository(Cart) private cartsRepository: Repository<Cart>,
     @InjectRepository(CartItems)
     private CartItemsRepository: Repository<CartItems>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) {}
 
   async create(user: User) {
     const cartUser = await this.usersService.findUserById(user.id);
-
     const cart = await this.cartsRepository.create({
       user: cartUser,
     });
@@ -40,11 +40,6 @@ export class CartsService {
     const formattedCart = this.formatCart(cart);
 
     return formattedCart;
-  }
-
-  async findCartByUserId(userId: string) {
-    const user = await this.usersService.findUserCart(userId);
-    return user.cart;
   }
 
   async clearCart(user: User) {
@@ -79,21 +74,6 @@ export class CartsService {
       newCart: refreshedCart,
     };
   }
-
-  // async updateCartByUserToken(updateCartDto: UpdateCartDto, user: any) {
-  //   console.log(user.userId);
-  //   const cart = await this.findCartByUserId(user.userId);
-
-  //   Object.assign(cart, updateCartDto);
-
-  //   const updatedCart = await this.cartsRepository.save(cart);
-
-  //   return updatedCart;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} cart`;
-  // }
 
   private formatCart(cart: Cart) {
     const formattedCart: any = _.cloneDeep(cart);

@@ -49,9 +49,15 @@ export class GoodsItemsService {
   }
 
   async findOne(id: number) {
-    return this.goodsItemsRepository.findOne({
+    const goodsItem = await this.goodsItemsRepository.findOne({
       where: { id },
       relations: ['color', 'size', 'goods', 'goodsItemImages', 'cartItems'],
     });
+
+    if (!goodsItem) {
+      throw new NotFoundException('GoodsItem not found.');
+    }
+
+    return goodsItem;
   }
 }

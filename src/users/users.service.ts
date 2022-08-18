@@ -72,7 +72,7 @@ export class UsersService {
       throw new InternalServerErrorException('User could not be created.');
     }
 
-    await this.cartsService.create(user.id);
+    await this.cartsService.create(user);
 
     return this.authService.login({
       id: user.id,

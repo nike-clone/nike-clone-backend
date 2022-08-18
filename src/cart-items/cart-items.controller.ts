@@ -26,7 +26,6 @@ export class CartItemsController {
     @Body() createCartItemDto: CreateCartItemDto,
     @CurrentUser() user: User,
   ) {
-    // console.log(user);
     return this.cartItemsService.createCartItem(createCartItemDto, user);
   }
 
