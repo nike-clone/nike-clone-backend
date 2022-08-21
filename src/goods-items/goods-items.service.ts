@@ -48,7 +48,7 @@ export class GoodsItemsService {
     return this.goodsItemsRepository.save(goodsItem);
   }
 
-  async findOne(id: number) {
+  async findOneById(id: number) {
     const goodsItem = await this.goodsItemsRepository.findOne({
       where: { id },
       relations: ['color', 'size', 'goods', 'goodsItemImages', 'cartItems'],
@@ -56,6 +56,22 @@ export class GoodsItemsService {
 
     if (!goodsItem) {
       throw new NotFoundException('GoodsItem not found.');
+    }
+
+    return goodsItem;
+  }
+
+  async findOneByProperties(goodsId: number, size: number, colorId: number) {
+    const goodsItem = await this.goodsItemsRepository.findOne({
+      where: {
+        goods: { id: goodsId },
+        size: { id: size },
+        color: { id: colorId },
+      },
+    });
+
+    if (!goodsItem) {
+      throw new NotFoundException('goodsItem not found.');
     }
 
     return goodsItem;

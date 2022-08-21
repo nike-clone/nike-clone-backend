@@ -26,22 +26,21 @@ export class CartItemsService {
   ) {}
 
   async createCartItem(createCartItemDto: CreateCartItemDto, user: User) {
+    const { goodsId, size, colorId, quantity } = createCartItemDto;
     const cart = await this.cartsRepository.findOne({
       where: { user: { id: user.id } },
       relations: ['cartItems.goodsItem'],
     });
 
-    const goodsItem = await this.goodsItemsService.findOne(
-      createCartItemDto.goodsItemId,
+    const goodsItem = await this.goodsItemsService.findOneByProperties(
+      goodsId,
+      size,
+      colorId,
     );
 
-    // return cart;
     // check goodsItem aleady exists in the cart
     cart.cartItems.forEach((cartItem) => {
-      if (
-        cartItem.goodsItem &&
-        cartItem.goodsItem.id === createCartItemDto.goodsItemId
-      ) {
+      if (cartItem.goodsItem && cartItem.goodsItem.id === goodsItem.id) {
         throw new NotAcceptableException(
           `The goodsItem (id: ${cartItem.goodsItem.id}) already exists in the cart. Use "PATCH" method instead.`,
         );
@@ -51,11 +50,22 @@ export class CartItemsService {
     const cartItem = await this.cartItemsRepository.create({
       cart,
       goodsItem,
-      quantity: createCartItemDto.quantity,
+      quantity,
+    });
+    const savedCartItem = await this.cartItemsRepository.save(cartItem);
+
+    const retrievedCartItem = await this.cartItemsRepository.findOne({
+      where: { id: savedCartItem.id },
+      relations: [
+        'cart',
+        'goodsItem.color',
+        'goodsItem.size',
+        'goodsItem.goods',
+        'goodsItem.goodsItemImages',
+      ],
     });
 
-    const savedCartItem = await this.cartItemsRepository.save(cartItem);
-    const formattedCartItem = this.formatCartItem(savedCartItem);
+    const formattedCartItem = this.formatCartItem(retrievedCartItem);
     delete formattedCartItem.cart.cartItems;
     return formattedCartItem;
   }
