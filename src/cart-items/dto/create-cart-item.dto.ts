@@ -4,6 +4,15 @@ export class CreateCartItemDto {
   @IsNumber()
   quantity: number;
 
+  // @IsNumber()
+  // goodsItemId: number;
+
   @IsNumber()
-  goodsItemId: number;
+  goodsId: number;
+
+  @IsNumber()
+  size: number;
+
+  @IsNumber()
+  colorId: number;
 }
