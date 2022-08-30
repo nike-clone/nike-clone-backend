@@ -14,6 +14,7 @@ import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { CartItems } from './entities/cart-item.entity';
 import * as _ from 'lodash';
+import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
 
 @Injectable()
 export class CartItemsService {
@@ -95,7 +96,12 @@ export class CartItemsService {
   ) {
     const cartItem = await this.cartItemsRepository.findOne({
       where: { id: cartItemId },
-      relations: ['cart.user', 'goodsItem'],
+      relations: [
+        'cart.user',
+        'goodsItem.goods',
+        'goodsItem.size',
+        'goodsItem.color',
+      ],
     });
 
     if (!cartItem) {
@@ -105,23 +111,43 @@ export class CartItemsService {
     // check if the user is the owner of the cart
     this.validateCartOwner(cartItem, user);
 
-    if (!this.checkStockIsAvailable(updateCartItemDto.quantity, cartItem)) {
+    //find to-be-saved in cart-items goods-item
+    const newGoodsItem = await this.goodsItemsService.findOneByProperties(
+      cartItem.goodsItem.goods.id,
+      updateCartItemDto.size,
+      updateCartItemDto.colorId,
+    );
+
+    if (!this.checkStockIsAvailable(updateCartItemDto.quantity, newGoodsItem)) {
       throw new NotAcceptableException(
         `Cannot set quantity greater than stock(current stock: ${cartItem.goodsItem.stock})`,
       );
     }
 
     cartItem.quantity = updateCartItemDto.quantity;
+    cartItem.goodsItem = newGoodsItem;
 
-    const upadtedCartItem = await this.cartItemsRepository.save(cartItem);
+    await this.cartItemsRepository.save(cartItem);
 
-    // return upadtedCartItem;
+    const savedCartItem = await this.cartItemsRepository.findOne({
+      where: { id: cartItem.id },
+      relations: [
+        'cart.user',
+        'goodsItem.size',
+        'goodsItem.color',
+        'goodsItem.goodsItemImages',
+        // 'goodsItem.goods',
+      ],
+    });
+
+    // size object -> size value 로 formatting
+    const sizeValue = savedCartItem.goodsItem.size.id;
+    const formattedCartItem = _.cloneDeep(savedCartItem) as any;
+    formattedCartItem.goodsItem.size = sizeValue;
+
     return {
       message: `CartItem(id: ${cartItem.id}) was updated.`,
-      updatedCartItem: {
-        id: upadtedCartItem.id,
-        quantity: upadtedCartItem.quantity,
-      },
+      updatedCartItem: formattedCartItem,
     };
   }
 
@@ -154,8 +180,8 @@ export class CartItemsService {
     }
   }
 
-  private checkStockIsAvailable(quantity: number, cartItem: CartItems) {
-    return quantity <= cartItem.goodsItem.stock;
+  private checkStockIsAvailable(quantity: number, goodsItem: GoodsItem) {
+    return quantity <= goodsItem.stock;
   }
 
   private formatCartItem(cartItem: CartItems) {

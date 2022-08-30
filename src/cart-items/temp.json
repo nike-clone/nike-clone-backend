@@ -1,40 +1,45 @@
-Goods {
-  "id": 16,
-  "name": "카이리 인피니티 EP",
-  "stock": 30,
-  "color": {
-    "id": 12,
-    "name": "보라색",
-    "colorCode": "#6241ab"
-  },
-  ...
+{
+  "message": "CartItem(id: 29) was updated.",
+  "updatedCartItem": {
+    "id": 29,
+    "quantity": 5,
+    "cart": {
+      "id": 50,
+      "user": {
+        "id": "01G9JGPSYK7FS9NW961987H2TR",
+        "email": "sys.ryan0902@gmail.com",
+        "password": "9eea15954fed63d9.7e9cadeff12ad78c724fd7339c7943ddc9fd86d931debf880d40ff79d6074665",
+        "name": "ryan",
+        "phone": "12345678",
+        "birthOfDate": "2022-02-28T15:00:00.000Z",
+        "gender": "Male",
+        "isAdmin": true
+      }
+    },
+    "goodsItem": {
+      "id": 5,
+      "stock": 30,
+      "size": 260,
+      "color": {
+        "id": 2,
+        "name": "검정색",
+        "colorCode": "#000000"
+      },
+      "goodsItemImages": {
+        "id": 3,
+        "goodsName": "나이키 줌X 인빈서블 런 플라이니트 2",
+        "color": "검정색",
+        "goodsItemImages": [
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/b5f8ca99-f2f5-4d85-8df4-341c9f9c5060_primary.jpg",
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/e9710e44-71fe-4406-ac2c-8442226140a7_2.jpg",
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/c0befa1e-b187-488b-bb8a-022dcc3346fa_3.jpg",
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/80cd4f58-9bfb-4fdc-81a7-4c3083941bc9_4.jpg",
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/2bde1b96-2cda-4cc3-a31a-651dca626182_5.jpg",
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/9a01bba3-913d-4322-bdf0-c44bb9c16219_6.jpg",
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/4f140f9a-b76e-433e-8e22-08f925225db4_7.jpg",
+          "https://static-breeze.nike.co.kr/kr/ko_kr/cmsstatic/product/DH5425-001/a31b45c7-aa4d-4f28-bef4-3697ea4ae2df_8.jpg"
+        ]
+      }
+    }
+  }
 }
-
-Goods {
-  "id": 17,
-  "name": "카이리 인피니티 EP",
-  "stock": 28,
-  "color": {
-    "id": 13,
-    "name": "흰색",
-    "colorCode": "#ffffff"
-  },
-  ...
-}
-
-Goods {
-  "id": 18,
-  "name": "카이리 인피니티 EP",
-  "stock": 15,
-  "color": {
-    "id": 14,
-    "name": "빨강색",
-    "colorCode": "#b42519"
-  },
-  ...
-}
-
-GET /api/goods?serial_number=27
-
-
-
