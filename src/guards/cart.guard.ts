@@ -32,8 +32,12 @@ export class CartGuard implements CanActivate {
 
   private async validateRequest(request: Request) {
     if (!request.headers.authorization) {
-      request.user = { id: request.query.anonymous_id };
-      return true;
+      if (request.query.anonymous_id) {
+        request.user = { id: request.query.anonymous_id };
+        return true;
+      }
+
+      throw new BadRequestException('Login or set anonymous_id.');
     }
     const jwtString = request.headers.authorization.split('Bearer ')[1];
 
