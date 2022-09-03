@@ -36,10 +36,13 @@ export class CartItemsController {
     );
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(CartGuard)
   @Get()
-  findAll(@CurrentUser() user: User) {
-    return this.cartItemsService.findAllCartItems(user);
+  findAll(
+    @CurrentUser() user: User,
+    @Query('anonymous_id') anonymous_id: string,
+  ) {
+    return this.cartItemsService.findAllCartItems(user, anonymous_id);
   }
 
   @UseGuards(AuthGuard)
