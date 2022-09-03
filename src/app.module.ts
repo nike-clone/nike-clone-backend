@@ -21,6 +21,7 @@ import { resolve } from 'path';
 import { GoodsClassificationModule } from './goods-classification/goods-classification.module';
 import { GoodsItemsModule } from './goods-items/goods-items.module';
 import { GoodsItemImagesModule } from './goods-item-images/goods-item-images.module';
+import { AnonymousCartModule } from './anonymous-cart/anonymous-cart.module';
 
 console.log(OrmConfig);
 @Module({
@@ -63,6 +64,7 @@ console.log(OrmConfig);
     GoodsClassificationModule,
     GoodsItemsModule,
     GoodsItemImagesModule,
+    AnonymousCartModule,
   ],
 })
 export class AppModule {}

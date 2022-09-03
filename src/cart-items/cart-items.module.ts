@@ -10,15 +10,18 @@ import { UsersService } from 'src/users/users.service';
 import { UsersModule } from 'src/users/users.module';
 import { GoodsItemsModule } from 'src/goods-items/goods-items.module';
 import { Cart } from 'src/carts/entities/cart.entity';
+import { AnonymousCart } from 'src/anonymous-cart/entities/anonymous-cart.entity';
+import { AnonymousCartModule } from 'src/anonymous-cart/anonymous-cart.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CartItems, Cart]),
+    TypeOrmModule.forFeature([CartItems, Cart, AnonymousCart]),
     CartsModule,
     GoodsModule,
     AuthModule,
     UsersModule,
     GoodsItemsModule,
+    AnonymousCartModule,
   ],
   controllers: [CartItemsController],
   providers: [CartItemsService],

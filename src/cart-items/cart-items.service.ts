@@ -15,6 +15,13 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { CartItems } from './entities/cart-item.entity';
 import * as _ from 'lodash';
 import { GoodsItem } from 'src/goods-items/entities/goods-item.entity';
+import { AnonymousCartService } from 'src/anonymous-cart/anonymous-cart.service';
+import { AnonymousCart } from 'src/anonymous-cart/entities/anonymous-cart.entity';
+
+enum CART_TYPE {
+  CART = 'cart',
+  ANONYMOUS_CART = 'anonymousCart',
+}
 
 @Injectable()
 export class CartItemsService {
@@ -24,14 +31,16 @@ export class CartItemsService {
     @InjectRepository(Cart) private cartsRepository: Repository<Cart>,
     private cartsService: CartsService,
     private goodsItemsService: GoodsItemsService,
+    private anonymousCartService: AnonymousCartService,
   ) {}
 
-  async createCartItem(createCartItemDto: CreateCartItemDto, user: User) {
+  async createCartItem(
+    createCartItemDto: CreateCartItemDto,
+    user: User,
+    anonymous_id: string,
+  ) {
+    //get a goodsItem
     const { goodsId, size, colorId, quantity } = createCartItemDto;
-    const cart = await this.cartsRepository.findOne({
-      where: { user: { id: user.id } },
-      relations: ['cartItems.goodsItem'],
-    });
 
     const goodsItem = await this.goodsItemsService.findOneByProperties(
       goodsId,
@@ -39,36 +48,53 @@ export class CartItemsService {
       colorId,
     );
 
-    // check goodsItem aleady exists in the cart
-    cart.cartItems.forEach((cartItem) => {
-      if (cartItem.goodsItem && cartItem.goodsItem.id === goodsItem.id) {
-        throw new NotAcceptableException(
-          `The goodsItem (id: ${cartItem.goodsItem.id}) already exists in the cart. Use "PATCH" method instead.`,
-        );
+    let cart: Cart | AnonymousCart;
+
+    if (anonymous_id) {
+      cart = await this.anonymousCartService.findOne(anonymous_id);
+      if (!cart) {
+        cart = await this.anonymousCartService.create({ id: anonymous_id });
       }
-    });
 
-    const cartItem = await this.cartItemsRepository.create({
-      cart,
-      goodsItem,
-      quantity,
-    });
-    const savedCartItem = await this.cartItemsRepository.save(cartItem);
+      // check goodsItem aleady exists in the cart
+      this.checkCartItemDuplication(cart, goodsItem);
 
-    const retrievedCartItem = await this.cartItemsRepository.findOne({
-      where: { id: savedCartItem.id },
-      relations: [
-        'cart',
-        'goodsItem.color',
-        'goodsItem.size',
-        'goodsItem.goods',
-        'goodsItem.goodsItemImages',
-      ],
-    });
+      const cartItem = await this.cartItemsRepository.create({
+        anonymousCart: cart,
+        goodsItem,
+        quantity,
+      });
 
-    const formattedCartItem = this.formatCartItem(retrievedCartItem);
-    delete formattedCartItem.cart.cartItems;
-    return formattedCartItem;
+      const formattedCartItem = await this.saveAndGetFormattedCartItem(
+        cartItem,
+        CART_TYPE.ANONYMOUS_CART,
+      );
+
+      delete formattedCartItem.anonymousCart.cartItems;
+      return formattedCartItem;
+    } else {
+      cart = await this.cartsRepository.findOne({
+        where: { user: { id: user.id } },
+        relations: ['cartItems.goodsItem'],
+      });
+
+      // check goodsItem aleady exists in the cart
+      this.checkCartItemDuplication(cart, goodsItem);
+
+      const cartItem = await this.cartItemsRepository.create({
+        cart,
+        goodsItem,
+        quantity,
+      });
+
+      const formattedCartItem = await this.saveAndGetFormattedCartItem(
+        cartItem,
+        CART_TYPE.CART,
+      );
+
+      delete formattedCartItem.cart.cartItems;
+      return formattedCartItem;
+    }
   }
 
   async findAllCartItems(user: User) {
@@ -136,7 +162,6 @@ export class CartItemsService {
         'goodsItem.size',
         'goodsItem.color',
         'goodsItem.goodsItemImages',
-        // 'goodsItem.goods',
       ],
     });
 
@@ -190,6 +215,37 @@ export class CartItemsService {
     formattedCartItem.goodsItem['size'] = sizeValue;
     delete formattedCartItem.cartItems;
 
+    return formattedCartItem;
+  }
+
+  private checkCartItemDuplication(
+    cart: Cart | AnonymousCart,
+    goodsItem: GoodsItem,
+  ) {
+    // check goodsItem aleady exists in the cart
+    cart.cartItems.forEach((cartItem) => {
+      if (cartItem.goodsItem && cartItem.goodsItem.id === goodsItem.id) {
+        throw new NotAcceptableException(
+          `The goodsItem (id: ${cartItem.goodsItem.id}) already exists in the cart. Use "PATCH" method instead.`,
+        );
+      }
+    });
+  }
+
+  private async saveAndGetFormattedCartItem(cartItem, cartType: CART_TYPE) {
+    const savedCartItem = await this.cartItemsRepository.save(cartItem);
+    const retrievedCartItem = await this.cartItemsRepository.findOne({
+      where: { id: savedCartItem.id },
+      relations: [
+        `${cartType === CART_TYPE.CART ? 'cart' : 'anonymousCart'}`,
+        'goodsItem.color',
+        'goodsItem.size',
+        'goodsItem.goods',
+        'goodsItem.goodsItemImages',
+      ],
+    });
+
+    const formattedCartItem = this.formatCartItem(retrievedCartItem);
     return formattedCartItem;
   }
 }

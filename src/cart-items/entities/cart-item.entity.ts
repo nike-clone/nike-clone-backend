@@ -2,6 +2,7 @@ import { Cart } from '../../carts/entities/cart.entity';
 import { GoodsItem } from '../../goods-items/entities/goods-item.entity';
 
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { AnonymousCart } from '../../anonymous-cart/entities/anonymous-cart.entity';
 
 @Entity()
 export class CartItems {
@@ -16,4 +17,7 @@ export class CartItems {
 
   @ManyToOne(() => Cart, (cart) => cart.cartItems)
   cart: Cart;
+
+  @ManyToOne(() => AnonymousCart, (anonymousCart) => anonymousCart.cartItems)
+  anonymousCart: AnonymousCart;
 }
