@@ -97,13 +97,31 @@ export class CartItemsService {
     }
   }
 
-  async findAllCartItems(user: User) {
-    const cart = await this.cartsRepository.findOne({
-      where: { user: { id: user.id } },
-    });
+  async findAllCartItems(user: User, anonymous_id: string) {
+    let cart: Cart | AnonymousCart;
+    let query;
+
+    if (anonymous_id) {
+      cart = await this.anonymousCartService.findOne(anonymous_id);
+      query = {
+        anonymousCart: {
+          id: cart.id,
+        },
+      };
+    } else {
+      cart = await this.cartsRepository.findOne({
+        where: { user: { id: user.id } },
+      });
+
+      query = {
+        cart: {
+          id: cart.id,
+        },
+      };
+    }
 
     const cartItems = await this.cartItemsRepository.find({
-      where: { cart: { id: cart.id } },
+      where: query,
       relations: ['goodsItem.color', 'goodsItem.size', 'goodsItem.goods'],
     });
 
