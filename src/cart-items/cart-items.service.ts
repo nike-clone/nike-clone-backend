@@ -193,10 +193,18 @@ export class CartItemsService {
     };
   }
 
-  async remove(id: number, user: User) {
+  async remove(id: number, user: User, anonymoud_id: string) {
+    let relations: string[];
+
+    if (anonymoud_id) {
+      relations = ['anonymousCart'];
+    } else {
+      relations = ['cart.user'];
+    }
+
     const cartItem = await this.cartItemsRepository.findOne({
       where: { id },
-      relations: ['cart.user'],
+      relations,
     });
 
     if (!cartItem) {
@@ -205,7 +213,9 @@ export class CartItemsService {
 
     const deletedCartItem = await this.cartItemsRepository.remove(cartItem);
 
-    delete deletedCartItem.cart.user;
+    if (deletedCartItem.cart) {
+      delete deletedCartItem.cart.user;
+    }
 
     return {
       message: `CartItem (id: ${id}) was deleted.`,

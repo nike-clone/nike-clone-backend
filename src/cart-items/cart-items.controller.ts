@@ -61,9 +61,13 @@ export class CartItemsController {
     );
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(CartGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: User) {
-    return this.cartItemsService.remove(id, user);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+    @Query('anonymous_id') anonymoud_id: string,
+  ) {
+    return this.cartItemsService.remove(id, user, anonymoud_id);
   }
 }
