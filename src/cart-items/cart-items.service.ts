@@ -143,25 +143,21 @@ export class CartItemsService {
     anonymous_id: string,
     user: User,
   ) {
+    const relations = ['goodsItem.goods', 'goodsItem.size', 'goodsItem.color'];
+    if (anonymous_id) {
+      relations.push('anonymousCart');
+    } else {
+      relations.push('cart.user');
+    }
+
     const cartItem = await this.cartItemsRepository.findOne({
       where: { id: cartItemId },
-      relations: [
-        `${anonymous_id ? null : 'cart.user'}`,
-        // 'cart.user',
-        'goodsItem.goods',
-        'goodsItem.size',
-        'goodsItem.color',
-      ],
+      relations,
     });
 
     if (!cartItem) {
       throw new NotFoundException('CartItem not found.');
     }
-
-    return cartItem;
-
-    // check if the user is the owner of the cart
-    this.validateCartOwner(cartItem, user);
 
     //find to-be-saved in cart-items goods-item
     const newGoodsItem = await this.goodsItemsService.findOneByProperties(
@@ -183,12 +179,7 @@ export class CartItemsService {
 
     const savedCartItem = await this.cartItemsRepository.findOne({
       where: { id: cartItem.id },
-      relations: [
-        'cart.user',
-        'goodsItem.size',
-        'goodsItem.color',
-        'goodsItem.goodsItemImages',
-      ],
+      relations,
     });
 
     // size object -> size value 로 formatting
@@ -212,9 +203,6 @@ export class CartItemsService {
       throw new NotFoundException('CartItem not found.');
     }
 
-    // check if the user is the owner of the cart
-    this.validateCartOwner(cartItem, user);
-
     const deletedCartItem = await this.cartItemsRepository.remove(cartItem);
 
     delete deletedCartItem.cart.user;
@@ -223,12 +211,6 @@ export class CartItemsService {
       message: `CartItem (id: ${id}) was deleted.`,
       deletedCartItem,
     };
-  }
-
-  private validateCartOwner(cartItem: CartItems, user: User) {
-    if (cartItem.cart.user.id !== user.id) {
-      throw new UnauthorizedException();
-    }
   }
 
   private checkStockIsAvailable(quantity: number, goodsItem: GoodsItem) {
