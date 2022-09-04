@@ -103,6 +103,10 @@ export class CartItemsService {
 
     if (anonymous_id) {
       cart = await this.anonymousCartService.findOne(anonymous_id);
+
+      if (!cart) {
+        cart = await this.anonymousCartService.create({ id: anonymous_id });
+      }
       query = {
         anonymousCart: {
           id: cart.id,
@@ -136,12 +140,14 @@ export class CartItemsService {
   async updateCartItem(
     cartItemId: number,
     updateCartItemDto: UpdateCartItemDto,
+    anonymous_id: string,
     user: User,
   ) {
     const cartItem = await this.cartItemsRepository.findOne({
       where: { id: cartItemId },
       relations: [
-        'cart.user',
+        `${anonymous_id ? null : 'cart.user'}`,
+        // 'cart.user',
         'goodsItem.goods',
         'goodsItem.size',
         'goodsItem.color',
@@ -151,6 +157,8 @@ export class CartItemsService {
     if (!cartItem) {
       throw new NotFoundException('CartItem not found.');
     }
+
+    return cartItem;
 
     // check if the user is the owner of the cart
     this.validateCartOwner(cartItem, user);
