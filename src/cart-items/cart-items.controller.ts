@@ -45,14 +45,20 @@ export class CartItemsController {
     return this.cartItemsService.findAllCartItems(user, anonymous_id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(CartGuard)
   @Patch(':cartItemId')
   update(
     @Param('cartItemId', ParseIntPipe) id: number,
+    @Query('anonymous_id') anonymous_id: string,
     @Body() updateCartItemDto: UpdateCartItemDto,
     @CurrentUser() user: User,
   ) {
-    return this.cartItemsService.updateCartItem(id, updateCartItemDto, user);
+    return this.cartItemsService.updateCartItem(
+      id,
+      updateCartItemDto,
+      anonymous_id,
+      user,
+    );
   }
 
   @UseGuards(AuthGuard)
