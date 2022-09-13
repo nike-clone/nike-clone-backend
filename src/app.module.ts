@@ -22,6 +22,7 @@ import { GoodsClassificationModule } from './goods-classification/goods-classifi
 import { GoodsItemsModule } from './goods-items/goods-items.module';
 import { GoodsItemImagesModule } from './goods-item-images/goods-item-images.module';
 import { AnonymousCartModule } from './anonymous-cart/anonymous-cart.module';
+import { OrdersModule } from './orders/orders.module';
 
 console.log(OrmConfig);
 @Module({
@@ -65,6 +66,7 @@ console.log(OrmConfig);
     GoodsItemsModule,
     GoodsItemImagesModule,
     AnonymousCartModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}
