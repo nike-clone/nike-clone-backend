@@ -6,7 +6,7 @@ import {
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 /**
- * reference: https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-rsp
+ * ference: https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-rsp
  */
 @Entity()
 export class Orders {
@@ -127,8 +127,7 @@ export class Orders {
   buyerPostcode: string;
 
   @Column({
-    type: 'varchar',
-    length: 255,
+    type: 'text',
     name: 'custom_data',
     comment: '해당 컬럼은 가맹점 임의 지정 데이터를 나타냅니다.',
   })
