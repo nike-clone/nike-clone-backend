@@ -1,15 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto, CreateOrderResponseDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { CartGuard } from 'src/guards/cart.guard';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+  @UseGuards(CartGuard)
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
+  create(
+    @Body() createOrderDto: CreateOrderDto,
+    @Query('anonymous_id') anonymous_id: string,
+    @CurrentUser() user: User,
+  ): Promise<CreateOrderResponseDto> {
+    return this.ordersService.create(createOrderDto, user, anonymous_id);
   }
 
   @Get()
