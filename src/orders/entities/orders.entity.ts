@@ -3,7 +3,14 @@ import {
   PAY_STATUS_ENUM,
   PG_PROVIDER_ENUM,
 } from 'src/common/enums';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 /**
  * ference: https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-rsp
@@ -147,4 +154,18 @@ export class Orders {
     comment: '해당 컬럼은 PG사에서 발행되는 거래 매출전표 URL을 나타냅니다.',
   })
   receiptUrl: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    name: 'anonymous_id',
+    default: null,
+    comment:
+      '해당 컬럼은 비회원 주문 시 비회원을 식별하기 위한 id를 나타냅니다.',
+  })
+  anonymousId: string;
+
+  @ManyToOne(() => User, (user) => user.orders)
+  @JoinColumn()
+  user: User;
 }
