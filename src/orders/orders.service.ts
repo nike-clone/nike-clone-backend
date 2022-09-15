@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateOrderDto, CreateOrderResponseDto } from './dto/create-order.dto';
+import { FindOrderResponseDto } from './dto/find-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Orders } from './entities/orders.entity';
 
@@ -29,11 +30,16 @@ export class OrdersService {
     if (anonymoud_id) {
       order = await this.ordersRepository.create({
         ...createOrderDto,
+        customData: JSON.stringify(createOrderDto.customData),
         anonymousId: anonymoud_id,
       });
     } else {
       // 회원 주문
-      order = await this.ordersRepository.create({ ...createOrderDto, user });
+      order = await this.ordersRepository.create({
+        ...createOrderDto,
+        customData: JSON.stringify(createOrderDto.customData),
+        user,
+      });
     }
     await this.ordersRepository.save(order);
 
@@ -43,12 +49,15 @@ export class OrdersService {
   }
 
   /**
-   * 결제 정보 목록 조회 서비
-   * @param user 
-   * @param anonymous_id 
-   * @returns 
+   * 주문 목록 조회 서비스 함수
+   * @param user 로그인한 경우 user object
+   * @param anonymous_id 비회원 주문의 경우 비회원 id
+   * @returns 결제 정보 목록
    */
-  async findAll(user: User, anonymous_id: string) {
+  async findAll(
+    user: User,
+    anonymous_id: string,
+  ): Promise<FindOrderResponseDto[]> {
     const whereOptions: FindOptionsWhere<Orders> = {};
 
     // 비회원 주문
@@ -56,25 +65,26 @@ export class OrdersService {
       whereOptions['anonymousId'] = anonymous_id;
     } else {
       // 회원 주문
+      // 회원 주문일 경우 anonymous_id query parameter가 undefined
       whereOptions.user = {
         id: user.id,
       };
     }
-    console.log(anonymous_id);
-    console.log(whereOptions);
+
     const orders = await this.ordersRepository.find({
       where: whereOptions,
     });
 
-    return orders;
-  }
+    const response: FindOrderResponseDto[] = [];
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
-  }
+    for (let i = 0; i < orders.length; i++) {
+      response.push({
+        ...orders[i],
+        customData: JSON.parse(orders[i].customData),
+      });
+    }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+    return response;
   }
 
   remove(id: number) {
