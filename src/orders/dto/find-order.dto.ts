@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDate,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -13,10 +14,10 @@ import {
   PG_PROVIDER_ENUM,
 } from 'src/common/enums';
 
-/**
- * 주문 생성 request body 구조
- */
-export class CreateOrderDto {
+export class FindOrderResponseDto {
+  @IsNumber()
+  id: number;
+
   @IsBoolean()
   success: boolean;
 
@@ -80,12 +81,10 @@ export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
   receiptUrl: string;
-}
 
-/**
- * 주문 생성 response body 구조
- */
-export class CreateOrderResponseDto {
   @IsString()
-  message: string;
+  anonymousId: string;
+
+  @IsDate()
+  createdAt: Date;
 }
