@@ -6,6 +6,7 @@ import {
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -164,6 +165,12 @@ export class Orders {
       '해당 컬럼은 비회원 주문 시 비회원을 식별하기 위한 id를 나타냅니다.',
   })
   anonymousId: string;
+
+  @CreateDateColumn({
+    name: 'created_at',
+    comment: '해당 컬럼은 주문 데이터가 DB에 저장된 시간을 나타냅니다.',
+  })
+  createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn()
