@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateOrderDto, CreateOrderResponseDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Orders } from './entities/orders.entity';
@@ -42,8 +42,31 @@ export class OrdersService {
     };
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  /**
+   * 결제 정보 목록 조회 서비
+   * @param user 
+   * @param anonymous_id 
+   * @returns 
+   */
+  async findAll(user: User, anonymous_id: string) {
+    const whereOptions: FindOptionsWhere<Orders> = {};
+
+    // 비회원 주문
+    if (anonymous_id) {
+      whereOptions['anonymousId'] = anonymous_id;
+    } else {
+      // 회원 주문
+      whereOptions.user = {
+        id: user.id,
+      };
+    }
+    console.log(anonymous_id);
+    console.log(whereOptions);
+    const orders = await this.ordersRepository.find({
+      where: whereOptions,
+    });
+
+    return orders;
   }
 
   findOne(id: number) {

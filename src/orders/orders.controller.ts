@@ -15,6 +15,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { CartGuard } from 'src/guards/cart.guard';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { Orders } from './entities/orders.entity';
 
 @Controller('orders')
 export class OrdersController {
@@ -30,9 +31,13 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto, user, anonymous_id);
   }
 
+  @UseGuards(CartGuard)
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  findAll(
+    @Query('anonymous_id') anonymous_id: string,
+    @CurrentUser() user: User,
+  ): Promise<Orders[]> {
+    return this.ordersService.findAll(user, anonymous_id);
   }
 
   @Get(':id')
