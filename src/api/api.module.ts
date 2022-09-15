@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { AdminModule } from 'src/admin/admin.module';
+import { AnonymousCartModule } from 'src/anonymous-cart/anonymous-cart.module';
 import { BannersModule } from 'src/banners/banners.module';
 import { CartItemsModule } from 'src/cart-items/cart-items.module';
 import { CartsModule } from 'src/carts/carts.module';
@@ -9,6 +10,7 @@ import { GoodsClassificationModule } from 'src/goods-classification/goods-classi
 import { GoodsItemImagesModule } from 'src/goods-item-images/goods-item-images.module';
 import { GoodsItemsModule } from 'src/goods-items/goods-items.module';
 import { GoodsModule } from 'src/goods/goods.module';
+import { OrdersModule } from 'src/orders/orders.module';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
@@ -23,6 +25,8 @@ import { UsersModule } from 'src/users/users.module';
     GoodsItemImagesModule,
     CartsModule,
     CartItemsModule,
+    AnonymousCartModule,
+    OrdersModule,
     RouterModule.register([
       {
         path: 'api',
@@ -65,6 +69,14 @@ import { UsersModule } from 'src/users/users.module';
       {
         path: 'api',
         module: CartItemsModule,
+      },
+      {
+        path: 'api',
+        module: AnonymousCartModule,
+      },
+      {
+        path: 'api',
+        module: OrdersModule,
       },
     ]),
   ],
