@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  Req,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto, CreateOrderResponseDto } from './dto/create-order.dto';
@@ -39,6 +40,11 @@ export class OrdersController {
     @CurrentUser() user: User,
   ): Promise<FindOrderResponseDto[]> {
     return this.ordersService.findAll(user, anonymous_id);
+  }
+
+  @Get('/:id')
+  findOrderById(@Param('id') id: string) {
+    return this.ordersService.findOrderById(id);
   }
 
   //TODO: 주문 취소

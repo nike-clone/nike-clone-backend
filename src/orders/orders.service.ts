@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -85,6 +85,17 @@ export class OrdersService {
     }
 
     return response;
+  }
+
+  async findOrderById(id: string) {
+    const order = await this.ordersRepository.findOne({ where: { id } });
+
+    if (!order) {
+      throw new NotFoundException(`Order (id: ${id}) not found.`);
+    }
+
+    return order;
+    // 회원일 경우
   }
 
   remove(id: number) {
