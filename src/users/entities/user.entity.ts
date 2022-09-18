@@ -1,7 +1,7 @@
 import { Cart } from '../../carts/entities/cart.entity';
 import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { Gender } from '../types/gender.type';
-import { Orders } from 'src/orders/entities/orders.entity';
+import { Orders } from '../../orders/entities/orders.entity';
 
 @Entity()
 export class User {

@@ -2,14 +2,16 @@ import {
   PAY_METHOD_ENUM,
   PAY_STATUS_ENUM,
   PG_PROVIDER_ENUM,
-} from 'src/common/enums';
-import { User } from 'src/users/entities/user.entity';
+} from '../../common/enums';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   JoinColumn,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -18,8 +20,10 @@ import {
  */
 @Entity()
 export class Orders {
-  @PrimaryGeneratedColumn()
-  id: number;
+  // @PrimaryGeneratedColumn('uuid', { length: 36 })
+  @PrimaryColumn()
+  @Generated('uuid')
+  id: string;
 
   @Column({ comment: '해당 컬럼은 결제의 성공 여부를 나타냅니다.' })
   success: boolean;

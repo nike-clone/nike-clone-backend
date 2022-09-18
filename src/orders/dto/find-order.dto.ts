@@ -15,8 +15,8 @@ import {
 } from 'src/common/enums';
 
 export class FindOrderResponseDto {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsBoolean()
   success: boolean;
